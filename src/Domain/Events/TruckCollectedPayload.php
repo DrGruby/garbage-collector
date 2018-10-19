@@ -9,17 +9,20 @@ class TruckCollectedPayload
     private $collectionTime;
     private $collectionPoint;
     private $garbageType;
+    private $truckPlatesId;
 
     public function __construct(
         string $bucketRfid,
         CollectionPoint $collectionPoint,
         \DateTimeImmutable $collectionTime,
-        string $garbageType
+        string $garbageType,
+        string $truckPlatesId
     ) {
         $this->bucketRfid = $bucketRfid;
         $this->collectionTime = $collectionTime;
         $this->collectionPoint = $collectionPoint;
         $this->garbageType = $garbageType;
+        $this->truckPlatesId = $truckPlatesId;
     }
 
     public function bucketRfid(): string
@@ -40,5 +43,10 @@ class TruckCollectedPayload
     public function garbageType(): string
     {
         return $this->garbageType;
+    }
+
+    public function truckPlatesId(): string
+    {
+        return $this->truckPlatesId;
     }
 }
