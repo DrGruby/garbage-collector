@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  app:
+    image:  php:7-apache
+    container_name: GC-php
+    ports:
+      - 80:80
+    volumes:
+      - ./:/var/www/html
+      - ./apache:/etc/apache2/sites-available
+  mysql:
+    image: mysql
+    container_name: GC-mysql
+    ports:
+      - 6603:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+    volumes:
+      - ./mysql:/var/lib/mysql
