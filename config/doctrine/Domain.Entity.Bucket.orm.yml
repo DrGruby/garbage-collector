@@ -1,0 +1,12 @@
+App\Domain\Entity\Bucket:
+  type: entity
+  table: buckets
+  id:
+    id:
+      type: uuid
+      generator: { strategy: NONE }
+  fields:
+    rfid:
+      type: string
+    garbageType:
+      type: string

@@ -13,6 +13,8 @@ class Lap
     private $truckId;
     private $startTime;
     private $status;
+    /** @var UuidInterface[] */
+    private $pickupIds;
 
     public function __construct(UuidInterface $truckId, \DateTimeImmutable $startTime)
     {
@@ -20,10 +22,12 @@ class Lap
         $this->truckId = $truckId;
         $this->startTime = $startTime;
         $this->status = self::STATUS_ACTIVE;
+        $this->pickupIds = [];
     }
 
-    public function collectGarbage(): void
+    public function collectGarbage(UuidInterface $pickupId): void
     {
+        $this->pickupIds[] = $pickupId;
     }
 
     public function truckId(): UuidInterface

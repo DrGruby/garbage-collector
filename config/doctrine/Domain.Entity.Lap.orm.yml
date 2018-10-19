@@ -10,3 +10,5 @@ App\Domain\Entity\Lap:
       type: uuid
     startTime:
       type: date_immutable
+    pickupIds:
+      type: simple_array

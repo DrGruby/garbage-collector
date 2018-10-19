@@ -2,6 +2,7 @@
 
 namespace App\Application;
 
+use App\Domain\Entity\GarbagePickup;
 use App\Domain\Entity\Lap;
 use App\Domain\Entity\Truck;
 use App\Domain\Events\TruckCollectedPayload;
@@ -11,11 +12,20 @@ class TruckService
 {
     private $truckRepository;
     private $lapRepository;
+    private $garbagePickupRepository;
+    private $bucketRepository;
 
-    public function __construct(TruckRepository $truckRepository, LapRepository $lapRepository)
+    public function __construct(
+        TruckRepository $truckRepository,
+        LapRepository $lapRepository,
+        GarbagePickupRepository $garbagePickupRepository,
+        BucketRepository $bucketRepository
+    )
     {
         $this->truckRepository = $truckRepository;
         $this->lapRepository = $lapRepository;
+        $this->garbagePickupRepository = $garbagePickupRepository;
+        $this->bucketRepository = $bucketRepository;
     }
 
     public function newLap(TruckDeparted $truckDeparted)
@@ -27,8 +37,13 @@ class TruckService
 
     public function garbageCollected(TruckCollectedPayload $event)
     {
+        $bucket = $this->bucketRepository->getByRFID($event->bucketRfid());
+        $garbagePickup = new GarbagePickup($bucket->id(), $event->collectionTime(),$event->garbageType());
+
         $truck = $this->truckRepository->getByPlate($event->truckPlatesId());
         $lap = $this->lapRepository->getActiveLapForTruckId($truck->id());
+        $lap->collectGarbage($garbagePickup->id());
 
+        $this->garbagePickupRepository->add($garbagePickup);
     }
 }
