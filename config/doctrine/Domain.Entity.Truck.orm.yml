@@ -1,4 +1,4 @@
-App\Entity\Truck:
+App\Domain\Entity\Truck:
   type: entity
   table: trucks
   id:
