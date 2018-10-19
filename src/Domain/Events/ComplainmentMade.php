@@ -3,22 +3,30 @@ namespace App\Domain\Events;
 
 use App\Domain\ValueObject\Position;
 
-class MadeComplainment
+class ComplainmentMade
 {
     const STATUS_NEW = 'new';
+    private $description;
     private $position;
     private $complainmentType;
-    private $complainmentTime;
+    private $complainmentSubmitTime;
     private $status;
 
     public function __construct(
+        string $description,
         Position $position,
         string $complainmentType
     ) {
+        $this->description = $description;
         $this->position = $position;
         $this->complainmentType = $complainmentType;
-        $this->complainmentTime = new \DateTimeImmutable();
+        $this->complainmentSubmitTime = new \DateTimeImmutable();
         $this->status = self::STATUS_NEW;
+    }
+
+    public function description(): string
+    {
+        return $this->description;
     }
 
     public function position(): Position
@@ -31,9 +39,9 @@ class MadeComplainment
         return $this->complainmentType;
     }
 
-    public function complainmentTime(): \DateTimeImmutable
+    public function complainmentSubmitTime(): \DateTimeImmutable
     {
-        return $this->complainmentTime;
+        return $this->complainmentSubmitTime;
     }
 
     public function status(): string
