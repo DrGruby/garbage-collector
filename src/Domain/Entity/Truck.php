@@ -8,11 +8,13 @@ class Truck
 {
     private $id;
     private $name;
+    private $plates;
 
-    public function __construct(string $name)
+    public function __construct(string $name, string $plates)
     {
         $this->id = Uuid::uuid4();
         $this->name = $name;
+        $this->plates = $plates;
     }
 
     public function id(): UuidInterface
@@ -23,5 +25,10 @@ class Truck
     public function name(): string
     {
         return $this->name;
+    }
+
+    public function plates(): string
+    {
+        return $this->plates;
     }
 }

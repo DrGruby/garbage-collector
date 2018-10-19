@@ -8,3 +8,5 @@ App\Domain\Entity\Truck:
   fields:
     name:
       type: string
+    plates:
+      type: string
