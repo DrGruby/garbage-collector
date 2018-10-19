@@ -1,7 +1,7 @@
 <?php
 namespace App\Domain\Events;
 
-class ComlainmentConfirmed
+class ComplainmentConfirmed
 {
     const STATUS_REJECTED = 'confirmed';
     private $complainmentCloseTime;
