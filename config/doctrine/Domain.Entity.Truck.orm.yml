@@ -1,0 +1,7 @@
+App\Entity\Truck:
+  type: entity
+  table: trucks
+  id:
+    id:
+      type: uuid
+      generator: { strategy: NONE }
