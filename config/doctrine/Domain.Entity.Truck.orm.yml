@@ -5,3 +5,6 @@ App\Entity\Truck:
     id:
       type: uuid
       generator: { strategy: NONE }
+  fields:
+    name:
+      type: string

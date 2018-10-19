@@ -1,13 +1,13 @@
 <?php
 namespace App\Domain\Events;
 
-class TruckDeprated
+class TruckDeparted
 {
     private $departureTime;
     private $truckPlatesId;
 
     public function __construct(
-        DateTimeImmutable $departureTime,
+        \DateTimeImmutable $departureTime,
         string $truckPlatesId
     ) {
         $this->departureTime = $departureTime;
@@ -19,7 +19,7 @@ class TruckDeprated
         return $this->truckPlatesId;
     }
 
-    public function departureTime(): DateTimeImmutable
+    public function departureTime(): \DateTimeImmutable
     {
         return $this->departureTime;
     }
