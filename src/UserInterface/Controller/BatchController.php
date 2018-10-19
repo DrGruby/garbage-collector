@@ -58,7 +58,7 @@ class BatchController extends Controller
         $minKeys = 7;
         $maxRow = 10;
         $response = $this->extractDataFromFile($file, function($object) use ($minKeys) {
-            
+
         }, $minKeys, $maxRow);
         return new Response(
             '<html><body>'.$response.'</body></html>'
@@ -71,7 +71,7 @@ class BatchController extends Controller
     public function batch2()
     {
         $finder = new Finder();
-        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/koma/')->name('*.csv');
+        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/koma/inventeryzacja')->name('*.csv');
 
         foreach($finder as $file){
             $file = $file->getRealPath();
@@ -93,4 +93,34 @@ class BatchController extends Controller
             '<html><body>'.$response.'</body></html>'
         );
     }
+
+    /**
+     * @Route("/batch3", name="app_batch3")
+     */
+    public function batch3()
+    {
+        $finder = new Finder();
+        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/koma/eventy')->name('*.csv');
+
+        foreach($finder as $file){
+            $file = $file->getRealPath();
+            $minKeys = 25;
+            $maxRow = 10;
+            // $bucketRepository = $this->get('app.bucket_repository');
+            $bucketRepository = 1;
+            $response = $this->extractDataFromFile($file, function($object) use ($bucketRepository)
+            {
+                var_dump($object);
+                // if(!empty($object["Nr pojemnika"])) {
+                //     $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);
+                //     $bucket = new Bucket($object['Nr pojemnika'],$object['Typ pojemnika'],$position,2);
+                //     $bucketRepository->add($bucket);
+                // }
+            }, $minKeys, $maxRow);
+        }
+        return new Response(
+            '<html><body>'.$response.'</body></html>'
+        );
+    }
 }
+
