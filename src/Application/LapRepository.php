@@ -10,4 +10,6 @@ interface LapRepository
     public function add(Lap $lap): void;
 
     public function get(UuidInterface $lapId): Lap;
+
+    public function getActiveLapForTruckId(UuidInterface $id): Lap;
 }

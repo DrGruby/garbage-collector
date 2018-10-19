@@ -1,0 +1,14 @@
+App\Domain\Entity\GarbagePickup:
+  type: entity
+  table: pickups
+  id:
+    id:
+      type: uuid
+      generator: { strategy: NONE }
+  fields:
+    bucketId:
+      type: uuid
+    collectionTime:
+      type: date_immutable
+    garbageType:
+      type: string

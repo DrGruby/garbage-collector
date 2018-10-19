@@ -1,0 +1,12 @@
+App\Domain\Entity\Lap:
+  type: entity
+  table: laps
+  id:
+    id:
+      type: uuid
+      generator: { strategy: NONE }
+  fields:
+    truckId:
+      type: uuid
+    startTime:
+      type: date_immutable
