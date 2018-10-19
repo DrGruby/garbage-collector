@@ -53,3 +53,5 @@
 *.iml
 out
 gen
+
+mysql/
