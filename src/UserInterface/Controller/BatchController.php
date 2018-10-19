@@ -22,7 +22,7 @@ class BatchController extends Controller
         // return (object)$object;
     }
 
-    protected function extractDataFromFile(string $file, int $maxRow = 10, int $minKeys = 7, callable $callback )
+    protected function extractDataFromFile(string $file, callable $callback, int $minKeys = 7, int $maxRow = 10 )
     {
         $row = 1;
         $response = '';
@@ -57,7 +57,9 @@ class BatchController extends Controller
         $file = __DIR__.'/../../../csv/Dane 2017 waga Hryniewicze.csv';
         $minKeys = 7;
         $maxRow = 10;
-        $response = $this->extractDataFromFile($file, $maxRow, $minKeys);
+        $response = $this->extractDataFromFile($file, function($object) use ($minKeys) {
+            
+        }, $minKeys, $maxRow);
         return new Response(
             '<html><body>'.$response.'</body></html>'
         );
@@ -77,7 +79,7 @@ class BatchController extends Controller
             $maxRow = 10;
             $bucketRepository = $this->get('app.bucket_repository');
 
-            $response = $this->extractDataFromFile($file, $maxRow, $minKeys, function($object) use ($bucketRepository)
+            $response = $this->extractDataFromFile($file, function($object) use ($bucketRepository)
             {
                 if(!empty($object["Nr pojemnika"])) {
                     // var_dump($object);
@@ -85,7 +87,7 @@ class BatchController extends Controller
                     $bucket = new Bucket($object['Nr pojemnika'],$object['Typ pojemnika'],$position,2);
                     $bucketRepository->add($bucket);
                 }
-            });
+            }, $minKeys, $maxRow);
         }
         return new Response(
             '<html><body>'.$response.'</body></html>'
