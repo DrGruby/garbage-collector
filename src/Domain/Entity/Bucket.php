@@ -9,6 +9,8 @@ class Bucket
     const GARBAGE_DRY = 'dry';
     const GARBAGE_MIXED = 'mixed';
     const GARBAGE_GLASS = 'glass';
+    const GARBAGE_BIODEGRADABLE = 'biodegradable';
+    const GARBAGE_BULKY = 'bulky';
     private $id;
     private $rfid;
     private $garbageType;

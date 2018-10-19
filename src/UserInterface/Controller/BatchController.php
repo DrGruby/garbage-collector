@@ -10,6 +10,24 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class BatchController extends Controller
 {
+    protected function getGarbageType($type)
+    {
+        switch($type)
+        {  
+            case "SUCHE":
+                return Bucket::GARBAGE_DRY;
+            case "szkło":
+                return Bucket::GARBAGE_GLASS;
+            case "zielone":
+            case "popiół":
+                return Bucket::GARBAGE_BIODEGRADABLE;
+            case  "gabaryty":
+                return Bucket::GARBAGE_BULKY;
+            default:
+                return Bucket::GARBAGE_MIXED;
+        }
+    }
+
     protected function convertToObject(array $keys, array $data)
     {
         $object = [];
@@ -28,11 +46,9 @@ class BatchController extends Controller
         $response = '';
         if (($handle = fopen($file, "r")) !== FALSE) {
             $keys = $this->getKeys($handle,$minKeys);
-            while (($data = fgetcsv($handle, 0, ",")) !== FALSE && $row <= $maxRow) {
-                $num = count($data);
+            while (($data = fgetcsv($handle, 0, ",")) !== FALSE && ( $row <= $maxRow || $maxRow === -1))  {
                 $object = $this->convertToObject($keys,$data);
-                $callback($object);
-                $response .= "<p> ".json_encode($object)."</p>";
+                $response .= "<p> ".$callback($object)."</p>";
                 $row++;
             }
             fclose($handle);
@@ -76,18 +92,23 @@ class BatchController extends Controller
         foreach($finder as $file){
             $file = $file->getRealPath();
             $minKeys = 10;
-            $maxRow = 10;
+            $maxRow = 40;
             $bucketRepository = $this->get('app.bucket_repository');
 
-            $response = $this->extractDataFromFile($file, function($object) use ($bucketRepository)
+            $controller = $this;
+
+            $response = $this->extractDataFromFile($file, function($object) use ($controller)
             {
+                var_dump(($object['Typ odpadu']));
                 if(!empty($object["Nr pojemnika"])) {
                     // var_dump($object);
                     $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);
-                    $bucket = new Bucket($object['Nr pojemnika'],$object['Typ pojemnika'],$position,2);
-                    $bucketRepository->add($bucket);
+                    $type = $controller->getGarbageType($object['Typ odpadu']);
+                    $bucket = new Bucket($object['Nr pojemnika'],$type,$position,2);
+                    $controller->get('app.bucket_repository')->add($bucket);
+                    return $bucket->id;
                 }
-            }, $minKeys, $maxRow);
+            }, $minKeys, $maxRow = -1);
         }
         return new Response(
             '<html><body>'.$response.'</body></html>'
