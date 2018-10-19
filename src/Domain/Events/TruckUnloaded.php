@@ -10,7 +10,7 @@ class TruckUnloaded
     private $truckPlatesId;
     
     public function __construct(
-        string $district,
+        int $district,
         string $garbageType,
         float $garbageWeight,
         \DateTimeImmutable $truckArriveTime,
@@ -23,7 +23,7 @@ class TruckUnloaded
         $this->truckPlatesId = $truckPlatesId;
     }
 
-    public function district(): string
+    public function district(): int
     {
         return $this->district;
     }

@@ -1,26 +1,26 @@
 <?php
 namespace App\Domain\Events;
 
-use App\Domain\ValueObject\CollectionPoint;
+use App\Domain\ValueObject\Position;
 
 class TruckCollectedPayload
 {
     private $bucketRfid;
     private $collectionTime;
-    private $collectionPoint;
+    private $position;
     private $garbageType;
     private $truckPlatesId;
 
     public function __construct(
         string $bucketRfid,
-        CollectionPoint $collectionPoint,
+        Position $position,
         \DateTimeImmutable $collectionTime,
         string $garbageType,
         string $truckPlatesId
     ) {
         $this->bucketRfid = $bucketRfid;
         $this->collectionTime = $collectionTime;
-        $this->collectionPoint = $collectionPoint;
+        $this->position = $position;
         $this->garbageType = $garbageType;
         $this->truckPlatesId = $truckPlatesId;
     }
@@ -30,9 +30,9 @@ class TruckCollectedPayload
         return $this->bucketRfid;
     }
 
-    public function collectionPoint(): CollectionPoint
+    public function position(): Position
     {
-        return $this->collectionPoint;
+        return $this->position;
     }
 
     public function collectionTime(): \DateTimeImmutable

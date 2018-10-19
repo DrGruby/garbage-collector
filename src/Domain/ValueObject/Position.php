@@ -1,7 +1,7 @@
 <?php
 namespace App\Domain\ValueObject;
 
-class CollectionPoint
+class Position
 {
     private $latitude;
     private $longitude;
