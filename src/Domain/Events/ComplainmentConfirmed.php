@@ -3,7 +3,7 @@ namespace App\Domain\Events;
 
 class ComplainmentConfirmed
 {
-    const STATUS_REJECTED = 'confirmed';
+    const STATUS_CONFIRMED = 'confirmed';
     private $complainmentCloseTime;
     private $confirmationMessage;
 
@@ -12,7 +12,7 @@ class ComplainmentConfirmed
     ) {
         $this->complainmentCloseTime = new \DateTimeImmutable();
         $this->confirmationMessage = $confirmationMessage;
-        $this->status = self::STATUS_REJECTED;
+        $this->status = self::STATUS_CONFIRMED;
     }
 
     public function complainmentCloseTime(): DateTimeImmutable
