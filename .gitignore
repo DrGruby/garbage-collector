@@ -54,4 +54,8 @@
 out
 gen
 
+# Php console files
+.web-server-pid
+var
+
 mysql/
