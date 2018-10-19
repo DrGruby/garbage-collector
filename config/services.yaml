@@ -21,4 +21,8 @@ services:
         class: App\Infrastructure\DoctrineTruckRepository
         arguments:
             - "@doctrine.orm.default_entity_manager"
+    app.bucket_repository:
+        class: App\Infrastructure\DoctrineBucketRepository
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
 

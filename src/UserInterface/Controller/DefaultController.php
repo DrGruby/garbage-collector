@@ -3,6 +3,8 @@ namespace App\UserInterface\Controller;
 
 use App\Application\TruckRepository;
 use App\Application\TruckService;
+use App\Domain\Entity\Bucket;
+use App\Domain\Entity\Position;
 use App\Domain\Entity\Truck;
 use App\Domain\Events\TruckDeparted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -25,8 +27,6 @@ class DefaultController extends Controller
 
     /**
      * @Route("/test", name="app_test")
-     * @param TruckService $service
-     * @param TruckRepository $truckRepository
      * @return Response
      * @throws \Exception
      */
@@ -38,5 +38,17 @@ class DefaultController extends Controller
         $truckRepository->add($truck);
 ////        $service->newLap(new TruckDeparted(new \DateTimeImmutable(), $truck->plates()));
         return new Response('derp');
+    }
+    /**
+     * @Route("/bucket-test", name="app_bucket_test")
+     * @return Response
+     * @throws \Exception
+     */
+    public function bucketTest()
+    {
+        $bucket = new Bucket('RFID1101',Bucket::GARBAGE_DRY,new Position(20,50),1);
+        $bucketRepository = $this->get('app.bucket_repository');
+        $bucketRepository->add($bucket);
+        return new Response($bucket->id());
     }
 }
