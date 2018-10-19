@@ -1,5 +1,5 @@
 <?php
-namespace App\Domain\ValueObject;
+namespace App\Domain\Entity;
 
 class Position
 {

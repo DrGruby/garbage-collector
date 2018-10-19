@@ -1,0 +1,7 @@
+App\Domain\Entity\Position:
+  type: embeddable
+  fields:
+    latitude:
+      type: float
+    longitude:
+      type: float

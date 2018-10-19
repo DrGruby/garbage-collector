@@ -12,12 +12,16 @@ class Bucket
     private $id;
     private $rfid;
     private $garbageType;
+    private $position;
+    private $district;
 
-    public function __construct(string $rfid, string $garbageType)
+    public function __construct(string $rfid, string $garbageType, Position $position, int $district)
     {
         $this->id = Uuid::uuid4();
         $this->rfid = $rfid;
         $this->garbageType = $garbageType;
+        $this->position = $position;
+        $this->district = $district;
     }
 
     public function id(): \Ramsey\Uuid\UuidInterface
@@ -33,5 +37,15 @@ class Bucket
     public function garbageType(): string
     {
         return $this->garbageType;
+    }
+
+    public function position(): Position
+    {
+        return $this->position;
+    }
+
+    public function district(): int
+    {
+        return $this->district;
     }
 }

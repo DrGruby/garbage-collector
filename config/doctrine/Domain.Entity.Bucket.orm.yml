@@ -10,3 +10,7 @@ App\Domain\Entity\Bucket:
       type: string
     garbageType:
       type: string
+
+  embedded:
+    position:
+      class: Position
