@@ -54,7 +54,18 @@ class ReportService
 
     public function maxTimeBetweenPickupsInMinutes(Lap $lap): int
     {
-        return 0;
+        $maxTime = 0;
+        $lastPickup = null;
+        foreach ($lap->pickupIds() as $pickupId) {
+            $pickup = $this->pickupRepository->get($pickupId);
+            if ($lastPickup !== null) {
+                $timeInterval = $pickup->collectionTime()->diff($lastPickup->collectionTime());
+                if ((int)$timeInterval->format('%i') > $maxTime) $maxTime = (int)$timeInterval->format('%i');
+            }
+            $lastPickup = $pickup;
+        }
+
+        return $maxTime;
     }
 
     public function fromLastPickupToUnloadInMinutes(Lap $lap): int
