@@ -71,7 +71,15 @@ class ReportService
 
     public function fromLastPickupToUnloadInMinutes(Lap $lap): int
     {
-        return 0;
+        $minTime = 0;
+        foreach ($lap->pickupIds() as $pickupId) {
+            $pickup = $this->pickupRepository->get($pickupId);
+            $timeInterval = $pickup->collectionTime()->diff($lap->unloadTime());
+                if ((int)$timeInterval->format('%i') > $minTime){
+                    $minTime = (int)$timeInterval->format('%i');
+            }
+        }
+        return $minTime;
     }
 
     public function lapTimeInMinutes(Lap $lap): int
