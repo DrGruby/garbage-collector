@@ -11,17 +11,20 @@ class ComplainmentMade
     private $complainmentType;
     private $complainmentSubmitTime;
     private $status;
+    private $submitter;
 
     public function __construct(
         string $description,
         Position $position,
-        string $complainmentType
+        string $complainmentType,
+        string $submitter
     ) {
         $this->description = $description;
         $this->position = $position;
         $this->complainmentType = $complainmentType;
         $this->complainmentSubmitTime = new \DateTimeImmutable();
         $this->status = self::STATUS_NEW;
+        $this->submitter = $submitter;
     }
 
     public function description(): string
@@ -47,5 +50,10 @@ class ComplainmentMade
     public function status(): string
     {
         return $this->status;
+    }
+
+    public function submitter(): string
+    {
+        return $this->submitter;
     }
 }

@@ -1,15 +1,12 @@
 <?php
-namespace App\Domain\Entity;
+namespace App\Domain\Views;
 
+use App\Domain\Entity\Position;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-class Complainment
+class DetailedComplainmentView
 {
-    const STATUS_NEW = 'new';
-    const STATUS_PROCESSING = 'processing';
-    const STATUS_REJECTED = 'rejected';
-    const STATUS_CONFIRMED = 'confirmed';
     private $complainmentCloseTime;
     private $complainmentProcessingStartTime;
     private $complainmentSubmitTime;
@@ -23,6 +20,7 @@ class Complainment
     private $submitter;
 
     public function __construct(
+        Uuid $id,
         ?\DateTimeImmutable $complainmentCloseTime,
         ?\DateTimeImmutable $complainmentProcessingStartTime,
         \DateTimeImmutable $complainmentSubmitTime,
@@ -34,7 +32,7 @@ class Complainment
         string $status,
         string $submitter
     ) {
-        $this->id = Uuid::uuid4();
+        $this->id = $id;
         $this->complainmentCloseTime = $complainmentCloseTime;
         $this->complainmentProcessingStartTime = $complainmentProcessingStartTime;
         $this->complainmentSubmitTime = $complainmentSubmitTime;
@@ -62,7 +60,7 @@ class Complainment
         return $this->complainmentProcessingStartTime;
     }
 
-    public function complainmentSubmitTime(): ?\DateTimeImmutable
+    public function complainmentSubmitTime(): \DateTimeImmutable
     {
         return $this->complainmentSubmitTime;
     }

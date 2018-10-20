@@ -31,7 +31,7 @@ class ViewController extends Controller
     }
 
     /**
-     * @Route("/complainment", name="app_complainment_view")
+     * @Route("/complainments", name="app_complainments_view")
      */
     public function complainmentView()
     {

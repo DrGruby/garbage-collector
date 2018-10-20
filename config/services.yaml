@@ -57,3 +57,7 @@ services:
         class: App\Application\ComplainmentService
         arguments:
             - "@app.complainment_repository"
+    app.complainment_query:
+        class: App\Infrastructure\Query\DbalComplainmentQuery
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
