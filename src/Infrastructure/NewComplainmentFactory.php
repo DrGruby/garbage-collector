@@ -17,7 +17,8 @@ class NewComplainmentFactory
             $event->description(),
             $event->position(),
             null,
-            $event->status()
+            $event->status(),
+            $event->submitter()
         );
     }
 }

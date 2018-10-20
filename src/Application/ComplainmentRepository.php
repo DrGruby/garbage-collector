@@ -10,10 +10,5 @@ interface ComplainmentRepository
 
     public function get(UuidInterface $complainmentId): Complainment;
 
-    // implement collection?
-    // public function getByStatus(string $status): array;
-
-    // public function getByComplainmentType(string $complainmentType): array;
-
     public function save(Complainment $complainment): void;
 }

@@ -24,7 +24,7 @@ class DoctrineComplainmentRepository implements ComplainmentRepository
 
     public function get(UuidInterface $complainmentId): Complainment
     {
-        $this->repository->find($complainmentId);
+        return $this->repository->find($complainmentId);
     }
 
     public function save(Complainment $complainment): void
