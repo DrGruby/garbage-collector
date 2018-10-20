@@ -10,4 +10,4 @@ App\Domain\Entity\Event:
       type: date_immutable
       nullable: true
     data:
-      type: string
+      type: text
