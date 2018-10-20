@@ -1,7 +1,7 @@
 <?php
 namespace App\Domain\Events;
 
-use App\Domain\ValueObject\Position;
+use App\Domain\Entity\Position;
 
 class ComplainmentMade
 {

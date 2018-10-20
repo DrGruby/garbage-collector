@@ -22,14 +22,14 @@ class Complainment
     private $status;
 
     public function __construct(
-        \DateTimeImmutable $complainmentCloseTime,
-        \DateTimeImmutable $complainmentProcessingStartTime,
+        ?\DateTimeImmutable $complainmentCloseTime,
+        ?\DateTimeImmutable $complainmentProcessingStartTime,
         \DateTimeImmutable $complainmentSubmitTime,
         string $complainmentType,
-        string $confirmationMessage,
+        ?string $confirmationMessage,
         string $description,
         Position $position,
-        string $rejectionMessage,
+        ?string $rejectionMessage,
         string $status
     ) {
         $this->id = Uuid::uuid4();

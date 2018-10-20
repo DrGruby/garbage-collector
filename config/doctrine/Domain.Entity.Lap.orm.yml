@@ -9,7 +9,7 @@ App\Domain\Entity\Lap:
     truckId:
       type: uuid
     startTime:
-      type: date_immutable
+      type: datetime_immutable
     pickupIds:
       type: array
     status:
@@ -18,7 +18,7 @@ App\Domain\Entity\Lap:
       type: float
       nullable: true
     unloadTime:
-      type: date_immutable
+      type: datetime_immutable
       nullable: true
     district:
       type: integer

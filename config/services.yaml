@@ -37,6 +37,10 @@ services:
         class: App\Infrastructure\DoctrineEventRepository
         arguments:
             - "@doctrine.orm.default_entity_manager"
+    app.complainment_repository:
+        class: App\Infrastructure\DoctrineComplainmentRepository
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
     app.truck_service:
         class: App\Application\TruckService
         arguments:
@@ -49,3 +53,7 @@ services:
         arguments:
             - "@app.truck_service"
             - '@app.event_repository'
+    app.complainment_service:
+        class: App\Application\ComplainmentService
+        arguments:
+            - "@app.complainment_repository"
