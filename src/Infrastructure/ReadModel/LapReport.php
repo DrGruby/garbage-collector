@@ -17,14 +17,23 @@ class LapReport
     private $maxTimeBetweenPickups;
     private $timeToUnload;
     private $totalLapTime;
+    private $events;
 
-    public function __construct(UuidInterface $lapId, array $pickedGarbage, int $maxTimeBetweenPickups, int $timeToUnload, int $totalLapTime)
+    public function __construct(
+        UuidInterface $lapId,
+        array $pickedGarbage,
+        int $maxTimeBetweenPickups,
+        int $timeToUnload,
+        int $totalLapTime,
+        array $events
+    )
     {
         $this->lapId = $lapId;
         $this->pickedGarbage = $pickedGarbage;
         $this->maxTimeBetweenPickups = $maxTimeBetweenPickups;
         $this->timeToUnload = $timeToUnload;
         $this->totalLapTime = $totalLapTime;
+        $this->events = $events;
     }
 
     public function lapId(): UuidInterface
@@ -52,4 +61,8 @@ class LapReport
         return $this->totalLapTime;
     }
 
+    public function events(): array
+    {
+        return $this->events;
+    }
 }

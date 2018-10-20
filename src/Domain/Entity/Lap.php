@@ -63,7 +63,7 @@ class Lap
         return $this->garbageWeight;
     }
 
-    public function unloadTime()
+    public function unloadTime(): \DateTimeImmutable
     {
         return $this->unloadTime;
     }

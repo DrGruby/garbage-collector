@@ -32,7 +32,8 @@ class ReportService
             $this->pickedGarbageType($lap),
             $this->maxTimeBetweenPickupsInMinutes($lap),
             $this->fromLastPickupToUnloadInMinutes($lap),
-            $this->lapTimeInMinutes($lap)
+            $this->lapTimeInMinutes($lap),
+            $this->eventsForLap($lap)
         );
     }
 
@@ -76,5 +77,24 @@ class ReportService
     public function lapTimeInMinutes(Lap $lap): int
     {
         return 0;
+    }
+
+    private function eventsForLap(Lap $lap): array
+    {
+        $events = [];
+
+        $events[] = ['Lap start', $lap->startTime(), ''];
+        foreach ($lap->pickupIds() as $pickupId) {
+            $pickup = $this->pickupRepository->get($pickupId);
+            $bucket = $this->bucketRepository->get($pickup->bucketId());
+            $events[] = [
+                'Garbage pickup, type:' . $bucket->garbageType(),
+                $pickup->collectionTime(),
+                (string)$bucket->position()->latitude() . ',' . (string)$bucket->position()->longitude()
+            ];
+        }
+        $events[] = ['Lap end, garbage weight: ' . $lap->garbageWeight(), $lap->unloadTime(), ''];
+
+        return $events;
     }
 }
