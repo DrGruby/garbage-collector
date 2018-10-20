@@ -69,11 +69,11 @@ class ComplainmentController extends Controller
     /**
      * @Route("admin/complainments/show-new", name="app_admin_complainments_show_new")
      */
-    public function adminShowComplainments()
+    public function adminShowNewComplainments()
     {
         $complainments = $this->get('app.complainment_query')->getNewComplainments();
 
-        $mappedComplainments = array_map(function($complainment) {
+        $mapped = array_map(function($complainment) {
             return [
                 'complainmentType' => $complainment->complainmentType(),
                 'id' => $complainment->id(),
@@ -82,7 +82,7 @@ class ComplainmentController extends Controller
             ];
         }, $complainments);
 
-        return new Response(json_encode($mappedComplainments));
+        return $this->render('NewComplainmentsView.html.twig', ['mapped' => $mapped]);
     }
     
     /**
