@@ -1,0 +1,32 @@
+App\Domain\Entity\Complainment:
+  type: entity
+  table: complainments
+  id:
+    id:
+      type: uuid
+      generator: { strategy: NONE }
+  fields:
+    complainmentCloseTime:
+      type: date_immutable
+      nullable: true
+    complainmentProcessingStartTime:
+      type: date_immutable
+      nullable: true
+    complainmentSubmitTime:
+      type: date_immutable
+    complainmentType:
+      type: string
+    confirmationMessage:
+      type: string
+      nullable: true
+    description:
+      type: string
+    rejectionMessage:
+      type: string
+      nullable: true
+    status:
+      type: string
+
+  embeded:
+    position:
+      class: Position
