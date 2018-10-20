@@ -83,33 +83,32 @@ class BatchController extends Controller
     }
 
     /**
-     * @Route("/batch2", name="app_batch2")
+     * @Route("/komaInvent", name="app_koma_invent")
      */
-    public function batch2()
+    public function komaInvent()
     {
         $finder = new Finder();
         $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/koma/inventeryzacja')->name('*.csv');
 
         foreach($finder as $file){
-            $file = $file->getRealPath();
-            $minKeys = 10;
-            $maxRow = 40;
+            $filePath = $file->getRealPath();
+            $minKeys = 5;
+            $maxRow = 10;
             $bucketRepository = $this->get('app.bucket_repository');
 
             $controller = $this;
+            $district = preg_replace('/.+([0-9]{1}).csv$/', "$1", $file->getFilename());
 
-            $response = $this->extractDataFromFile($file, function($object) use ($controller)
+            $response = $this->extractDataFromFile($filePath, function($object) use ($district, $controller)
             {
-                var_dump(($object['Typ odpadu']));
                 if(!empty($object["Nr pojemnika"])) {
-                    // var_dump($object);
                     $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);
                     $type = $controller->getGarbageType($object['Typ odpadu']);
-                    $bucket = new Bucket($object['Nr pojemnika'],$type,$position,2);
+                    $bucket = new Bucket($object['Nr pojemnika'],$type,$position,$district);
                     $controller->get('app.bucket_repository')->add($bucket);
-                    return $bucket->id;
+                    return $bucket->id();
                 }
-            }, $minKeys, $maxRow = -1);
+            }, $minKeys, $maxRow);
         }
         return new Response(
             '<html><body>'.$response.'</body></html>'
@@ -117,12 +116,12 @@ class BatchController extends Controller
     }
 
     /**
-     * @Route("/batch3", name="app_batch3")
+     * @Route("/blysk", name="app_blysk")
      */
-    public function batch3()
+    public function blysk()
     {
         $finder = new Finder();
-        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/koma/eventy')->name('*.csv');
+        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/blysk')->name('*.csv');
 
         foreach($finder as $file){
             $file = $file->getRealPath();
