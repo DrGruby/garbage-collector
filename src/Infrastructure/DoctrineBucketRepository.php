@@ -29,7 +29,7 @@ class DoctrineBucketRepository implements BucketRepository
         return $this->repository->find($bucketId);
     }
 
-    public function getByRFID(string $bucketRFID): Bucket
+    public function getByRFID(string $bucketRFID): ?Bucket
     {
         return $this->repository->findOneBy(['rfid' => $bucketRFID]);
     }

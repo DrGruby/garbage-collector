@@ -11,5 +11,5 @@ interface BucketRepository
 
     public function get(UuidInterface $bucketId): Bucket;
 
-    public function getByRFID(string $bucketRFID): Bucket;
+    public function getByRFID(string $bucketRFID): ?Bucket;
 }

@@ -1,0 +1,13 @@
+App\Domain\Entity\Event:
+  type: entity
+  table: events
+  id:
+    id:
+      type: uuid
+      generator: { strategy: NONE }
+  fields:
+    time:
+      type: date_immutable
+      nullable: true
+    data:
+      type: string

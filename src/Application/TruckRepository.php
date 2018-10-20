@@ -11,5 +11,5 @@ interface TruckRepository
 
     public function get(UuidInterface $truckId): Truck;
 
-    public function getByPlate(string $truckPlatesId): Truck;
+    public function getByPlate(string $truckPlatesId): ?Truck;
 }

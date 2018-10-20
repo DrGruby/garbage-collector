@@ -16,9 +16,8 @@ class BatchController extends Controller
 {
     protected function getTruck(string $name, string $plates)
     {
-        try {
-            $truck = $this->get('app.truck_repository')->getByPlate($plates);
-        } catch(\Exception $e) {
+        $truck = $this->get('app.truck_repository')->getByPlate($plates);
+        if(is_null($truck)) {
             $truck = new Truck($name, $plates);
             $this->get('app.truck_repository')->add($truck);
         }
@@ -27,9 +26,8 @@ class BatchController extends Controller
 
     protected function getBucket(string $rfid, string $type, position $position, int $district)
     {
-        try {
-            $bucket = $this->get('app.bucket_repository')->getByRFID($rfid);
-        } catch(\Exception $e) {
+        $bucket = $this->get('app.bucket_repository')->getByRFID($rfid);
+        if(is_null($bucket)){
             $bucket = new Bucket($rfid,$type,$position,$district);
             $this->get('app.bucket_repository')->add($bucket);
         }
@@ -181,7 +179,7 @@ class BatchController extends Controller
     public function blysk()
     {
         $finder = new Finder();
-        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/blysk')->name('*.csv');
+        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/blysk')->name('*Grudzień.csv');
 
         foreach($finder as $file){
             $file = $file->getRealPath();
@@ -194,9 +192,9 @@ class BatchController extends Controller
             {
                 $date = new \DateTimeImmutable($object['Czas zdarzenia']);
                 $district = 6;
+                $positions = explode(' , ', $object['WSPÓŁRZĘDNE POJAZDU']);
                 $position = new Position($positions[0],$positions[1]);
-                $positions = split(' , ', $object['WSPÓŁRZĘDNE POJAZDU']);
-                $status = $object['opis'];
+                $status = $object['OPIS'];
                 $type = $this->getGarbageType($object['FRAKCJA']);
 
                 $truck = $controller->getTruck($object['NAZWA POJAZDU'], $object['NR REJESTRACYJNY']);
@@ -208,7 +206,7 @@ class BatchController extends Controller
                         $controller->get('app.truck_service')->newLap($truckDeparted);
                         break;
                     case 'Załadunek pojemnika':
-                        $bucket = $controller->getBucket($rfid, $type, $position, $district);
+                        $bucket = $controller->getBucket($object['RFID0'], $type, $position, $district);
                         $garbageCollected = new TruckCollectedPayload(
                             $bucket->rfid(),
                             $position,
@@ -219,6 +217,7 @@ class BatchController extends Controller
                         $controller->get('app.truck_service')->garbageCollected($garbageCollected);
                         break;
                     case 'Wyładunek':
+                        var_dump($object);exit;
                         // how to get data in here?
                         break;
                     case 'Wylogowanie NAVI':
@@ -230,7 +229,7 @@ class BatchController extends Controller
                 }
                 
                 return print_r($object, true);
-            }, $minKeys, $maxRow);
+            }, $minKeys, $maxRow = -1 );
         }
         return new Response(
             '<html><body>'.$response.'</body></html>'
