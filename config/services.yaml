@@ -61,3 +61,10 @@ services:
         class: App\Infrastructure\Query\DbalComplainmentQuery
         arguments:
             - "@doctrine.orm.default_entity_manager"
+
+    app.lap_report:
+        class: App\Application\ReportService
+        arguments:
+            - '@app.lap_repository'
+            - '@app.pickup_repository'
+            - '@app.bucket_repository'

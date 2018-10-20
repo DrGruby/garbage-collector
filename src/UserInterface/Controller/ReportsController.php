@@ -1,7 +1,9 @@
 <?php
 namespace App\UserInterface\Controller;
 
+use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ReportsController extends Controller
@@ -25,16 +27,16 @@ class ReportsController extends Controller
      */
     public function reportView($id)
     {
+        $reportService = $this->get('app.lap_report');
 
-        $renderData = [
-            'viewName' => 'Complainment',
-            'types' => [
-                'type_1_complainment',
-                'type_2_complainment',
-                'type_3_complainment',
-            ],
-        ];
+        $report = $reportService->reportForLap(Uuid::fromString($id));
 
-        return $this->render('reportView.html.twig', $renderData);
+        var_dump((string)$report->lapId());
+        var_dump($report->maxTimeBetweenPickups());
+        var_dump($report->pickedGarbage());
+        var_dump($report->timeToUnload());
+        var_dump($report->totalLapTime());
+
+        return new Response('derp');
     }
 }
