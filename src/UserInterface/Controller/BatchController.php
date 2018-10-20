@@ -251,6 +251,7 @@ class BatchController extends Controller
                 $district = preg_replace('/<Sektor ([0-9]{1}) >/', '$1',$object['Info']);
                 if(is_numeric($district))
                 {
+var_dump($object);exit;
                     $time = new \DateTimeImmutable($object['DataBrutto']);
                     $truckUnload = new TruckUnloaded(
                         $district,
@@ -259,7 +260,7 @@ class BatchController extends Controller
                         $time, 
                         $object['Nr Rej.']
                     );
-
+var_dump($truckUnload->truckPlatesId(), $object['Nr Rej.']);
                     $event = new Event($time, serialize($truckUnload));
                     $controller->get('app.event_repository')->add($event);
                     return print_r($truckUnload, true);

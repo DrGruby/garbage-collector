@@ -16,14 +16,16 @@ class Bucket
     private $garbageType;
     private $position;
     private $district;
+    private $pickUpDays;
 
-    public function __construct(string $rfid, string $garbageType, Position $position, int $district)
+    public function __construct(string $rfid, string $garbageType, Position $position, int $district, array $pickUpDays = [])
     {
         $this->id = Uuid::uuid4();
         $this->rfid = $rfid;
         $this->garbageType = $garbageType;
         $this->position = $position;
         $this->district = $district;
+        $this->pickUpDays = $pickUpDays;
     }
 
     public function id(): \Ramsey\Uuid\UuidInterface
@@ -49,5 +51,15 @@ class Bucket
     public function district(): int
     {
         return $this->district;
+    }
+
+    public function getPickUpDay(): array
+    {
+        return $this->pickUpDays;
+    }
+
+    public function addPickUpDay(string $day): void
+    {
+        $this->pickUpDays[] = $day;
     }
 }
