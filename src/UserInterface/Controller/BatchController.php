@@ -114,15 +114,15 @@ class BatchController extends Controller
                 $bucket = $controller->get('app.bucket_repository')->getByRFID($object['Tag']);
                 if(!is_null($bucket)){
                     $time = new \DateTimeImmutable($object['Data odbioru']);
-                    $trackName = $object['Pojazd'];
-                    $trackPlate = $trackName;
-                    if(preg_match(' ', $trackName))
+                    $truckName = $object['Pojazd'];
+                    $truckPlate = $truckName;
+                    if(preg_match('/ /', $truckName))
                     {
-                        $trackRaw = explode(' ', $object['Pojazd']);
-                        $trackName = preg_replace('[\(\)]', '', $trackRaw[1]);
-                        $trackPlate = $trackRaw[0];
+                        $truckRaw = explode(' ', $object['Pojazd']);
+                        $truckName = preg_replace('[\(\)]', '', $truckRaw[1]);
+                        $truckPlate = $truckRaw[0];
                     }
-                    $truck = $controller->getTruck($truckName, $TruckPlate);
+                    $truck = $controller->getTruck($truckName, $truckPlate);
                     $garbageCollected = new TruckCollectedPayload(
                         $bucket->rfid(),
                         $bucket->position(),
