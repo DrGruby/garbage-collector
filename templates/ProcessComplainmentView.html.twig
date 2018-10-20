@@ -19,8 +19,8 @@
         </div>
 
         <div class="container">
-            <a href="admin/complainments/{{id}}/confirm" class="btn btn-primary btn-sm">Confirm Complainment</a>
-            <a href="admin/complainments/{{id}}/reject" class="btn btn-secondary btn-sm">Reject Complainment</a>
+            <a href="{{ path('app_admin_complainments_confirm', { 'complainmentId': id }) }}" class="btn btn-primary btn-sm">Confirm Complainment</a>
+            <a href="{{ path('app_admin_complainments_reject', { 'complainmentId': id }) }}" class="btn btn-secondary btn-sm">Reject Complainment</a>
         </div>
     </body>
 </html>

@@ -34,7 +34,7 @@
         </div>
 
         <div class="container">
-            <a href="admin/complainments/{{id}}/process" class="btn btn-primary btn-sm">Review Complainment</a>
+            <a href="{{ path('app_admin_complainments_process', {'complainmentId': id}) }}" class="btn btn-primary btn-sm">Review Complainment</a>
         </div>
     </body>
 </html>
