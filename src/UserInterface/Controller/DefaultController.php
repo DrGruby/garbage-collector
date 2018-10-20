@@ -3,6 +3,7 @@ namespace App\UserInterface\Controller;
 
 use App\Domain\Entity\Bucket;
 use App\Domain\Entity\Event;
+use App\Domain\Entity\Lap;
 use App\Domain\Entity\Position;
 use App\Domain\Entity\Truck;
 use App\Domain\Events\TruckCollectedPayload;
@@ -92,6 +93,23 @@ class DefaultController extends Controller
         $bucketRepository->add($bucket);
 
         return new Response($bucket->id());
+    }
+
+    /**
+     * @Route("/active-lap-test", name="app_active_lap_test")
+     * @return Response
+     * @throws \Exception
+     */
+    public function activeLapTest()
+    {
+        $truck = new Truck('derp','BI11111');
+        $lap = new Lap($truck->id(),new \DateTimeImmutable());
+
+        $lapRepository = $this->get('app.lap_repository');
+
+        $lapRepository->save($lap);
+
+        return new Response($truck->id());
     }
 
     /**

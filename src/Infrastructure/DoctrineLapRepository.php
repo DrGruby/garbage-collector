@@ -25,8 +25,9 @@ class DoctrineLapRepository implements LapRepository
 
     public function get(UuidInterface $lapId): Lap
     {
-        $this->repository->find($lapId);
+        return $this->repository->find($lapId);
     }
+
 
     public function getActiveLapForTruckId(UuidInterface $truckId): ?Lap
     {

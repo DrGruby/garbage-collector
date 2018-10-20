@@ -33,4 +33,14 @@ class DoctrineTruckRepository implements TruckRepository
     {
         return $this->repository->findOneBy(['plates' => $truckPlatesId]);
     }
+
+    public function getByName(string $truckName): ?Truck
+    {
+        return $this->repository->findOneBy(['name' => $truckName]);
+    }
+
+    public function __destruct()
+    {
+        $this->entityManager->flush();
+    }
 }
