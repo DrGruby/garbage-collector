@@ -210,7 +210,7 @@ class BatchController extends Controller
     }
 
     /**
-     * @Route("/garbageLitter", name="app_garbageLitter")
+     * @Route("/garbageImport", name="app_garbageImport")
      */
     public function garbageImport()
     {
