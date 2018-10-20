@@ -33,6 +33,10 @@ services:
         class: App\Infrastructure\DoctrineLapRepository
         arguments:
             - "@doctrine.orm.default_entity_manager"
+    app.event_repository:
+        class: App\Infrastructure\DoctrineEventRepository
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
     app.truck_service:
         class: App\Application\TruckService
         arguments:

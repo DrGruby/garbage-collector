@@ -24,9 +24,8 @@ class DoctrineEventRepository implements EventRepository
         $this->entityManager->flush();
     }
 
-    public function getAll(): Array
+    public function getAll(): array
     {
-        return $this->repository->find($eventId);
+        return $this->repository->findBy([], ['time' => 'ASC']);
     }
-
 }

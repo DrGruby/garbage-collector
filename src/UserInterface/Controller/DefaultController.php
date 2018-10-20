@@ -2,6 +2,7 @@
 namespace App\UserInterface\Controller;
 
 use App\Domain\Entity\Bucket;
+use App\Domain\Entity\Event;
 use App\Domain\Entity\Position;
 use App\Domain\Entity\Truck;
 use App\Domain\Events\TruckCollectedPayload;
@@ -46,6 +47,32 @@ class DefaultController extends Controller
 
         $truckUnloaded = new TruckUnloaded(7, $bucket->garbageType(), 0.75, new \DateTimeImmutable(), $truck->plates());
         $truckService->truckUnloaded($truckUnloaded);
+
+        return new Response('derp');
+    }
+
+    /**
+     * @Route("/test-event-store", name="app_test_event_store")
+     * @return Response
+     * @throws \Exception
+     */
+    public function testEventStore()
+    {
+        $eventToReplay = new TruckDeparted(new \DateTimeImmutable(), 'BI12345');
+
+        $event1 = new Event(new \DateTimeImmutable('2017-01-02'), serialize($eventToReplay));
+        $event2 = new Event(new \DateTimeImmutable('2017-01-01'), serialize($eventToReplay));
+        $event3 = new Event(new \DateTimeImmutable('2017-01-05'), serialize($eventToReplay));
+        $event4 = new Event(new \DateTimeImmutable('2017-01-03'), serialize($eventToReplay));
+
+        $eventRepository = $this->get('app.event_repository');
+
+        $eventRepository->add($event1);
+        $eventRepository->add($event2);
+        $eventRepository->add($event3);
+        $eventRepository->add($event4);
+
+        var_dump($eventRepository->getAll());
 
         return new Response('derp');
     }
