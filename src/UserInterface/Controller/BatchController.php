@@ -173,68 +173,6 @@ class BatchController extends Controller
     }
 
     /**
-     * @Route("/blysk", name="app_blysk")
-     */
-    public function blysk()
-    {
-        $finder = new Finder();
-        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/blysk')->name('*Grudzień.csv');
-
-        foreach($finder as $file){
-            $file = $file->getRealPath();
-            $minKeys = 10;
-            // $bucketRepository = $this->get('app.bucket_repository');
-            $bucketRepository = 1;
-            $controller = $this;
-            $response = $this->extractDataFromFile($file, function($object) use ($controller)
-            {
-                $date = new \DateTimeImmutable($object['Czas zdarzenia']);
-                $district = 6;
-                $positions = explode(' , ', $object['WSPÓŁRZĘDNE POJAZDU']);
-                $position = new Position($positions[0],$positions[1]);
-                $status = $object['OPIS'];
-                $type = $this->getGarbageType($object['FRAKCJA']);
-
-                $truck = $controller->getTruck($object['NAZWA POJAZDU'], $object['NR REJESTRACYJNY']);
-                
-                switch($status)
-                {
-                    case "Logowanie NAVI":
-                        $truckDeparted = new TruckDeparted($date, $truck->plates());
-                        $controller->get('app.truck_service')->newLap($truckDeparted);
-                        break;
-                    case 'Załadunek pojemnika':
-                        $bucket = $controller->getBucket($object['RFID0'], $type, $position, $district);
-                        $garbageCollected = new TruckCollectedPayload(
-                            $bucket->rfid(),
-                            $position,
-                            $date,
-                            $bucket->garbageType(),
-                            $truck->plates()
-                        );
-                        $controller->get('app.truck_service')->garbageCollected($garbageCollected);
-                        break;
-                    case 'Wyładunek':
-                        var_dump($object);exit;
-                        // how to get data in here?
-                        break;
-                    case 'Wylogowanie NAVI':
-                        // what to do ?
-                        break;
-                    case 'Notatka':
-                    default:
-                        //add ERROR ?
-                }
-                
-                return print_r($object, true);
-            }, $minKeys);
-        }
-        return new Response(
-            '<html><body>'.$response.'</body></html>'
-        );
-    }
-
-    /**
      * @Route("/sort", name="app_sort")
      */
     public function sort()
@@ -257,7 +195,7 @@ class BatchController extends Controller
                         $controller->getGarbageType($object['Asortyment']),
                         $object['Netto Rozl'], 
                         $time, 
-                        $object['Nr Rej.']
+                        ltrim($object['Nr Rej.'], 0)
                     );
                     $event = new Event($time, serialize($truckUnload));
                     $controller->get('app.event_repository')->add($event);
@@ -274,7 +212,7 @@ class BatchController extends Controller
     /**
      * @Route("/garbageLitter", name="app_garbageLitter")
      */
-    public function garbageLitter()
+    public function garbageImport()
     {
         $finder = new Finder();
         $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/spalarnia')->name('*.csv');
@@ -295,7 +233,7 @@ class BatchController extends Controller
                         $controller->getGarbageType($object['PRODUKT']),
                         $object['NETTO'], 
                         $time, 
-                        $object['POJAZD/ WAGON']
+                        ltrim($object['POJAZD/ WAGON'],0)
                     );
 
                     $event = new Event($time, serialize($truckUnload));
