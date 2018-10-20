@@ -60,8 +60,8 @@ class ReportService
         foreach ($lap->pickupIds() as $pickupId) {
             $pickup = $this->pickupRepository->get($pickupId);
             if ($lastPickup !== null) {
-                $timeInterval = $pickup->collectionTime()->diff($lastPickup->collectionTime());
-                if ((int)$timeInterval->format('%i') > $maxTime) $maxTime = (int)$timeInterval->format('%i');
+                $timeInterval = (($pickup->collectionTime()->getTimestamp() - $lastPickup->collectionTime()->getTimestamp())/60);
+                if ($timeInterval > $maxTime) $maxTime = (int)$timeInterval;
             }
             $lastPickup = $pickup;
         }
@@ -71,12 +71,12 @@ class ReportService
 
     public function fromLastPickupToUnloadInMinutes(Lap $lap): int
     {
-        $minTime = 0;
+        $minTime = 9999;
         foreach ($lap->pickupIds() as $pickupId) {
             $pickup = $this->pickupRepository->get($pickupId);
-            $timeInterval = $pickup->collectionTime()->diff($lap->unloadTime());
-                if ((int)$timeInterval->format('%i') > $minTime){
-                    $minTime = (int)$timeInterval->format('%i');
+            $timeInterval = (($lap->unloadTime()->getTimestamp() - $pickup->collectionTime()->getTimestamp())/60);
+                if ($timeInterval < $minTime){
+                    $minTime = $timeInterval;
             }
         }
         return $minTime;
@@ -84,7 +84,7 @@ class ReportService
 
     public function lapTimeInMinutes(Lap $lap): int
     {
-        return 0;
+        return (int)abs(($lap->unloadTime()->getTimestamp() - $lap->startTime()->getTimestamp())/ 60);
     }
 
     private function eventsForLap(Lap $lap): array
