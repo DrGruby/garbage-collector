@@ -1,6 +1,7 @@
 <?php
 namespace App\Infrastructure\Query;
 
+use App\Application\ComplainmentQuery;
 use App\Application\ComplainmentRepository;
 use App\Domain\Entity\Complainment;
 use App\Domain\Entity\Position;
