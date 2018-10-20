@@ -23,7 +23,7 @@
 
         <div class="container">
                 <li>LapId: {{report.lapId()}}</li>
-                <li>Max time between pickups: {{report.maxTimeBetweenPickups()}}</li>
+                <li>Max time between pickups: {{report.maxTimeBetweenPickups()}} minutes</li>
                 <li>
                     <ol>
                     {% for garbageType, itteration in report.pickedGarbage() %}
@@ -31,8 +31,26 @@
                     {% endfor %}
                     </ol>
                 </li>
-                <li>Time to unload: {{report.timeToUnload()}}</li>
-                <li>Total lap time: {{report.totalLapTime()}}</li>
+                <li>Time to unload: {{report.timeToUnload()}} minutes</li>
+                <li>Total lap time: {{report.totalLapTime()}} minutes</li>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Time</th>
+                            <th scope="col">Action</th>
+                            <th scope="col">Place</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in report.events %}
+                        <tr>
+                            <td>{{row[1].format("Y-m-d H:i:s")}}</td>
+                            <td>{{row[0]}}</td>
+                            <td>{{row[2]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
         </div>
     </body>
 </html>
