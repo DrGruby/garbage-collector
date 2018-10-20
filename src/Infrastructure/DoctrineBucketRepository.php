@@ -21,7 +21,6 @@ class DoctrineBucketRepository implements BucketRepository
     public function add(Bucket $bucket): void
     {
         $this->entityManager->persist($bucket);
-        $this->entityManager->flush();
     }
 
     public function get(UuidInterface $bucketId): Bucket
@@ -32,5 +31,10 @@ class DoctrineBucketRepository implements BucketRepository
     public function getByRFID(string $bucketRFID): ?Bucket
     {
         return $this->repository->findOneBy(['rfid' => $bucketRFID]);
+    }
+
+    public function __destruct()
+    {
+        $this->entityManager->flush();
     }
 }

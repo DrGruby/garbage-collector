@@ -21,11 +21,14 @@ class DoctrineEventRepository implements EventRepository
     public function add(Event $event): void
     {
         $this->entityManager->persist($event);
-        $this->entityManager->flush();
     }
 
     public function getAll(): array
     {
         return $this->repository->findBy([], ['time' => 'ASC']);
+    }
+    public function __destruct()
+    {
+        $this->entityManager->flush();
     }
 }

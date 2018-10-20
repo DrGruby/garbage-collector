@@ -21,7 +21,6 @@ class DoctrineLapRepository implements LapRepository
     public function save(Lap $lap): void
     {
         $this->entityManager->merge($lap);
-        $this->entityManager->flush();
     }
 
     public function get(UuidInterface $lapId): Lap
@@ -32,5 +31,10 @@ class DoctrineLapRepository implements LapRepository
     public function getActiveLapForTruckId(UuidInterface $truckId): Lap
     {
         return $this->repository->findOneBy(['status' => Lap::STATUS_ACTIVE, 'truckId' => $truckId]);
+    }
+
+    public function __destruct()
+    {
+        $this->entityManager->flush();
     }
 }

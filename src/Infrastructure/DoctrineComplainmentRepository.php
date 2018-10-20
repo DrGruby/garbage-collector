@@ -20,7 +20,6 @@ class DoctrineComplainmentRepository implements ComplainmentRepository
     public function add(Complainment $complainment): void
     {
         $this->entityManager->persist($complainment);
-        $this->entityManager->flush();
     }
 
     public function get(UuidInterface $complainmentId): Complainment
@@ -31,6 +30,10 @@ class DoctrineComplainmentRepository implements ComplainmentRepository
     public function save(Complainment $complainment): void
     {
         $this->entityManager->merge($complainment);
+    }
+
+    public function __destruct()
+    {
         $this->entityManager->flush();
     }
 }

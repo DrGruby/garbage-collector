@@ -21,7 +21,6 @@ class DoctrineTruckRepository implements TruckRepository
     public function add(Truck $truck): void
     {
         $this->entityManager->persist($truck);
-        $this->entityManager->flush();
     }
 
     public function get(UuidInterface $truckId): Truck
@@ -32,5 +31,10 @@ class DoctrineTruckRepository implements TruckRepository
     public function getByPlate(string $truckPlatesId): ?Truck
     {
         return $this->repository->findOneBy(['plates' => $truckPlatesId]);
+    }
+
+    public function __destruct()
+    {
+        $this->entityManager->flush();
     }
 }

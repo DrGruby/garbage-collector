@@ -21,11 +21,15 @@ class DoctrinePickupRepository implements GarbagePickupRepository
     public function add(GarbagePickup $garbagePickup): void
     {
         $this->entityManager->persist($garbagePickup);
-        $this->entityManager->flush();
     }
 
     public function get(UuidInterface $pickupId): GarbagePickup
     {
         return $this->repository->find($pickupId);
+    }
+
+    public function __destruct()
+    {
+        $this->entityManager->flush();
     }
 }
