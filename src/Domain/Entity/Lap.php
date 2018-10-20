@@ -34,13 +34,13 @@ class Lap
         $this->pickupIds[] = $pickupId;
     }
 
-    public function finish(float $garbageWeight, \DateTimeImmutable $unloadTime, int $district, string $garbageType) {
+    public function finish(float $garbageWeight, \DateTimeImmutable $unloadTime, int $district, string $garbageType)
+    {
         $this->garbageWeight = $garbageWeight;
         $this->unloadTime = $unloadTime;
         $this->district = $district;
         $this->garbageType = $garbageType;
         $this->status = self::STATUS_FINISHED;
-
     }
 
     public function id(): UuidInterface
@@ -67,10 +67,12 @@ class Lap
     {
         return $this->unloadTime;
     }
+
     public function district()
     {
         return $this->district;
     }
+
     public function truckId(): UuidInterface
     {
         return $this->truckId;

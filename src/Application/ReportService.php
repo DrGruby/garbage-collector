@@ -3,6 +3,7 @@
 namespace App\Application;
 
 use App\Domain\Entity\Lap;
+use App\Infrastructure\ReadModel\BucketReport;
 use App\Infrastructure\ReadModel\LapReport;
 use Ramsey\Uuid\UuidInterface;
 
@@ -21,6 +22,19 @@ class ReportService
         $this->lapRepository = $lapRepository;
         $this->pickupRepository = $pickupRepository;
         $this->bucketRepository = $bucketRepository;
+    }
+
+    public function reportForBucket(UuidInterface $bucketId) {
+        $bucket = $this->bucketRepository->get($bucketId);
+
+        $pickups = $this->pickupRepository->findForBucket($bucketId);
+
+        $pickupTimes = [];
+
+        return new BucketReport(
+            $pickupTimes,
+            0
+        );
     }
 
     public function reportForLap(UuidInterface $lapId): LapReport
