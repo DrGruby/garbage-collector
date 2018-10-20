@@ -4,6 +4,7 @@ namespace App\UserInterface\Controller;
 use App\Domain\Entity\Bucket;
 use App\Domain\Entity\Position;
 use App\Domain\Entity\Truck;
+use App\Domain\Entity\Event;
 use App\Domain\Events\TruckCollectedPayload;
 use App\Domain\Events\TruckDeparted;
 use App\Domain\Events\TruckUnloaded;
@@ -63,7 +64,6 @@ class BatchController extends Controller
         }
 
         return $object;
-        // return (object)$object;
     }
 
     protected function extractDataFromFile(string $file, callable $callback, int $minKeys = 7, int $maxRow = 10 )
@@ -113,12 +113,12 @@ class BatchController extends Controller
     public function komaEvent()
     {
         $finder = new Finder();
-        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/koma/inventeryzacja')->name('*.csv');
+        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/koma/eventy')->name('*.csv');
 
         foreach($finder as $file){
             $filePath = $file->getRealPath();
             $minKeys = 5;
-            $maxRow = 10;
+            $maxRow = -1;
             $bucketRepository = $this->get('app.bucket_repository');
 
             $controller = $this;
@@ -126,12 +126,20 @@ class BatchController extends Controller
 
             $response = $this->extractDataFromFile($filePath, function($object) use ($district, $controller)
             {
-                $rfid = $object['Nr pojemnika'];
-                if(!empty($rfid)) {
-                    $type = $this->getGarbageType($object['Typ odpadu']);
-                    $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);        
-                    $bucket = $controller->getBucket($rfid, $type, $position, $district);
-                    return $bucket->id();
+                $bucket = $controller->get('app.bucket_repository')->getByRFID($object['Tag']);
+                if(!is_null($bucket)){
+                    $time = new \DateTimeImmutable($object['Data odbioru']);
+                    $trackRaw = explode(' ', $object['Pojazd']);
+                    $truck = $controller->getTruck(preg_replace('[\(\)]', '', $trackRaw[1]), $trackRaw[0]);
+                    $garbageCollected = new TruckCollectedPayload(
+                        $bucket->rfid(),
+                        $bucket->position(),
+                        $time,
+                        $bucket->garbageType(),
+                        $truck->plates()
+                    );
+                    $event = new Event($time, serialize($garbageCollected));
+                    $controller->get('app.event_repository')->add($event);
                 }
             }, $minKeys, $maxRow);
         }
@@ -151,7 +159,7 @@ class BatchController extends Controller
         foreach($finder as $file){
             $filePath = $file->getRealPath();
             $minKeys = 5;
-            $maxRow = 10;
+            $maxRow = -1;
             $bucketRepository = $this->get('app.bucket_repository');
 
             $controller = $this;
@@ -247,20 +255,24 @@ class BatchController extends Controller
         foreach($finder as $file){
             $file = $file->getRealPath();
             $minKeys = 5;
-            $maxRow = 100;
-            $bucketRepository = 1;
-            $response = $this->extractDataFromFile($file, function($object) use ($bucketRepository)
+            $maxRow = -1;
+            $controller = $this;
+            $response = $this->extractDataFromFile($file, function($object) use ($controller)
             {
                 $district = preg_replace('/<Sektor ([0-9]{1}) >/', '$1',$object['Info']);
                 if(is_numeric($district))
                 {
+                    $time = new \DateTimeImmutable($object['DataBrutto']);
                     $truckUnload = new TruckUnloaded(
                         $district,
-                        $this->getGarbageType($object['Asortyment']),
+                        $controller->getGarbageType($object['Asortyment']),
                         $object['Netto Rozl'], 
-                        new \DateTimeImmutable($object['DataBrutto']), 
+                        $time, 
                         $object['Nr Rej.']
                     );
+
+                    $event = new Event($time, serialize($truckUnload));
+                    $controller->get('app.event_repository')->add($event);
                     return print_r($truckUnload, true);
                 }
                 return false;
