@@ -16,6 +16,9 @@ class BucketReport
         $this->maxDaysBetweenPickups = $maxDaysBetweenPickups;
     }
 
+    /**
+     * @return \DateTimeImmutable[]
+     */
     public function pickups(): array
     {
         return $this->pickups;
