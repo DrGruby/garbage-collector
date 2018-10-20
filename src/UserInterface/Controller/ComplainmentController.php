@@ -150,7 +150,7 @@ class ComplainmentController extends Controller
         
         $complainmentService->setComplainmentToProcess($event);
 
-        return $this->render('ProcessComplainmentView.html.twig');
+        return $this->render('ProcessComplainmentView.html.twig', ['id' => $complainmentId]);
     }
 
     /**
@@ -159,23 +159,23 @@ class ComplainmentController extends Controller
     public function rejectComplain($complainmentId)
     {
         $complainmentService = $this->get('app.complainment_service');
-        $event = new ComplainmentRejected(Uuid::fromString($complainmentId));
+        $event = new ComplainmentRejected(Uuid::fromString($complainmentId), 'TEST REJECTION MESSAGE');
         
         $complainmentService->setReject($event);
 
-        return $this->render('ProcessComplainmentView.html.twig');
+        return $this->render('ProcessComplainmentView.html.twig', ['id' => $complainmentId]);
     }
 
     /**
-     * @Route("admin/complainments/{id}/confirm", name="app_admin_complainments_confirm")
+     * @Route("admin/complainments/{complainmentId}/confirm", name="app_admin_complainments_confirm")
      */
     public function confirmComplain($complainmentId)
     {
         $complainmentService = $this->get('app.complainment_service');
-        $event = new ComplainmentConfirmed(Uuid::fromString($complainmentId));
+        $event = new ComplainmentConfirmed(Uuid::fromString($complainmentId), 'TEST CONFIRMATION MESSAGE');
         
-        $complainmentService->setComplainmentToProcess($event);
+        $complainmentService->setConfirm($event);
 
-        return $this->render('ProcessComplainmentView.html.twig');
+        return $this->render('ProcessComplainmentView.html.twig', ['id' => $complainmentId]);
     }
 }

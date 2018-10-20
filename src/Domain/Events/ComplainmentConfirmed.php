@@ -25,7 +25,7 @@ class ComplainmentConfirmed
         return $this->id;
     }
 
-    public function complainmentCloseTime(): DateTimeImmutable
+    public function complainmentCloseTime(): \DateTimeImmutable
     {
         return $this->complainmentCloseTime;
     }
