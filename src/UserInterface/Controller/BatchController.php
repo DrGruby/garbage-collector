@@ -187,7 +187,7 @@ class BatchController extends Controller
             $response = $this->extractDataFromFile($file, function($object) use ($controller)
             {
                 $district = preg_replace('/<Sektor ([0-9]{1}) >/', '$1',$object['Info']);
-                if(is_numeric($district))
+                if(is_numeric($district) && $district == 2)
                 {
                     $time = new \DateTimeImmutable($object['DataBrutto']);
                     $truckUnload = new TruckUnloaded(
@@ -225,7 +225,7 @@ class BatchController extends Controller
             {
                 $district = preg_replace('/SEKTOR ([0-9]{1})/', '$1',$object['POCHODZENIE']);
 
-                if(is_numeric($district))
+                if(is_numeric($district) && $district == 2)
                 {
                     $time = new \DateTimeImmutable($object['DATA 1 WAŻENIA']);
                     $truckUnload = new TruckUnloaded(
