@@ -1,11 +1,12 @@
 <?php
 namespace App\Domain\Events;
 
-class ComlainmentRejected
+class ComplainmentRejected
 {
     const STATUS_REJECTED = 'rejected';
     private $complainmentCloseTime;
     private $rejectionMessage;
+    private $status;
 
     public function __construct(
         string $rejectionMessage
