@@ -32,4 +32,13 @@ class DoctrinePickupRepository implements GarbagePickupRepository
     {
         $this->entityManager->flush();
     }
+
+    /**
+     * @param UuidInterface $bucketId
+     * @return GarbagePickup[]
+     */
+    public function findForBucket(UuidInterface $bucketId): array
+    {
+        // TODO: Implement findForBucket() method.
+    }
 }
