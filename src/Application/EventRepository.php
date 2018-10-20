@@ -7,7 +7,10 @@ use Ramsey\Uuid\UuidInterface;
 
 interface EventRepository
 {
-    public function add(\DateTimeImmutable $time, string $data): void;
+    public function add(Event $event): void;
 
-    public function getAll(): Array;
+    /**
+     * @return Event[]
+     */
+    public function getAll(): array;
 }

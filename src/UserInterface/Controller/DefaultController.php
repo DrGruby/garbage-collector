@@ -2,6 +2,7 @@
 namespace App\UserInterface\Controller;
 
 use App\Domain\Entity\Bucket;
+use App\Domain\Entity\Event;
 use App\Domain\Entity\Position;
 use App\Domain\Entity\Truck;
 use App\Domain\Events\TruckCollectedPayload;
@@ -51,6 +52,35 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/test-event-store", name="app_test_event_store")
+     * @return Response
+     * @throws \Exception
+     */
+    public function testEventStore()
+    {
+        $eventToReplay1 = new TruckDeparted(new \DateTimeImmutable('2017-01-02'), 'BI12345');
+        $eventToReplay2 = new TruckDeparted(new \DateTimeImmutable('2017-01-04'), 'BI12345');
+        $eventToReplay3 = new TruckDeparted(new \DateTimeImmutable('2017-01-01'), 'BI12345');
+        $eventToReplay4 = new TruckDeparted(new \DateTimeImmutable('2017-01-03'), 'BI12345');
+
+        $event1 = new Event($eventToReplay1->departureTime(), serialize($eventToReplay1));
+        $event2 = new Event($eventToReplay2->departureTime(), serialize($eventToReplay2));
+        $event3 = new Event($eventToReplay3->departureTime(), serialize($eventToReplay3));
+        $event4 = new Event($eventToReplay4->departureTime(), serialize($eventToReplay4));
+
+        $eventRepository = $this->get('app.event_repository');
+
+        $eventRepository->add($event1);
+        $eventRepository->add($event2);
+        $eventRepository->add($event3);
+        $eventRepository->add($event4);
+
+        var_dump($eventRepository->getAll());
+
+        return new Response('derp');
+    }
+
+    /**
      * @Route("/bucket-test", name="app_bucket_test")
      * @return Response
      * @throws \Exception
@@ -62,5 +92,18 @@ class DefaultController extends Controller
         $bucketRepository->add($bucket);
 
         return new Response($bucket->id());
+    }
+
+    /**
+     * @Route("/replay-events", name="app_replay_events")
+     * @return Response
+     * @throws \Exception
+     */
+    public function replayEvents()
+    {
+        $batchService = $this->get('app.batch_service');
+        $batchService->replayEvents();
+
+        return new Response('Ok.');
     }
 }
