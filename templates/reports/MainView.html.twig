@@ -23,7 +23,11 @@
 
         <div class="container">
             {% for item in reportsList %}
-                 <li><a href="reports/{{ item.id }}">{{ item.truckId() }}</a></li>
+                {% if item.pickupIds()|length>2 %}
+                <div class="alert alert-primary" role="alert">
+                     <a href="reports/{{ item.id }}">ID: {{ item.id }}</a> Time: {{item.unloadTime.format("Y-m-d H:i:s")}}
+                </div>
+                {% endif %}
             {% endfor %}
         </div>
     </body>
