@@ -66,13 +66,13 @@ class BatchController extends Controller
         return $object;
     }
 
-    protected function extractDataFromFile(string $file, callable $callback, int $minKeys = 7, int $maxRow = 10 )
+    protected function extractDataFromFile(string $file, callable $callback, int $minKeys = 7)
     {
         $row = 1;
         $response = '';
         if (($handle = fopen($file, "r")) !== FALSE) {
             $keys = $this->getKeys($handle,$minKeys);
-            while (($data = fgetcsv($handle, 0, ",")) !== FALSE && ( $row <= $maxRow || $maxRow === -1))  {
+            while (($data = fgetcsv($handle, 0, ",")) !== FALSE)  {
                 $object = $this->convertToObject($keys,$data);
                 $response .= "<p> ".$callback($object)."</p>";
                 $row++;
@@ -90,21 +90,6 @@ class BatchController extends Controller
             $keys = $this->getKeys($handle, $min);
         }
         return $keys;
-    }
-    /**
-     * @Route("/batch", name="app_batch")
-     */
-    public function batch()
-    {
-        $file = __DIR__.'/../../../csv/Dane 2017 waga Hryniewicze.csv';
-        $minKeys = 7;
-        $maxRow = 10;
-        $response = $this->extractDataFromFile($file, function($object) use ($minKeys) {
-
-        }, $minKeys, $maxRow);
-        return new Response(
-            '<html><body>'.$response.'</body></html>'
-        );
     }
 
     /**
@@ -141,7 +126,7 @@ class BatchController extends Controller
                     $event = new Event($time, serialize($garbageCollected));
                     $controller->get('app.event_repository')->add($event);
                 }
-            }, $minKeys, $maxRow);
+            }, $minKeys);
         }
         return new Response(
             '<html><body>'.$response.'</body></html>'
@@ -159,7 +144,6 @@ class BatchController extends Controller
         foreach($finder as $file){
             $filePath = $file->getRealPath();
             $minKeys = 5;
-            $maxRow = -1;
             $bucketRepository = $this->get('app.bucket_repository');
 
             $controller = $this;
@@ -174,7 +158,7 @@ class BatchController extends Controller
                     $bucket = $controller->getBucket($rfid, $type, $position, $district);
                     return $bucket->id();
                 }
-            }, $minKeys, $maxRow);
+            }, $minKeys);
         }
         return new Response(
             '<html><body>'.$response.'</body></html>'
@@ -192,7 +176,6 @@ class BatchController extends Controller
         foreach($finder as $file){
             $file = $file->getRealPath();
             $minKeys = 10;
-            $maxRow = 10;
             // $bucketRepository = $this->get('app.bucket_repository');
             $bucketRepository = 1;
             $controller = $this;
@@ -237,7 +220,7 @@ class BatchController extends Controller
                 }
                 
                 return print_r($object, true);
-            }, $minKeys, $maxRow = -1 );
+            }, $minKeys);
         }
         return new Response(
             '<html><body>'.$response.'</body></html>'
@@ -255,7 +238,6 @@ class BatchController extends Controller
         foreach($finder as $file){
             $file = $file->getRealPath();
             $minKeys = 5;
-            $maxRow = -1;
             $controller = $this;
             $response = $this->extractDataFromFile($file, function($object) use ($controller)
             {
@@ -276,7 +258,7 @@ class BatchController extends Controller
                     return print_r($truckUnload, true);
                 }
                 return false;
-            }, $minKeys, $maxRow);
+            }, $minKeys);
         }
         return new Response(
             '<html><body>'.$response.'</body></html>'

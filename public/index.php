@@ -1,5 +1,6 @@
 <?php
 
+set_time_limit(3600);
 use App\Kernel;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
