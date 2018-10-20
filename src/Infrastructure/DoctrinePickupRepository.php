@@ -39,6 +39,6 @@ class DoctrinePickupRepository implements GarbagePickupRepository
      */
     public function findForBucket(UuidInterface $bucketId): array
     {
-        return $this->repository->findBy(['bucketId' => $bucketId]);
+        return $this->repository->findBy(['bucketId' => $bucketId], ['collectionTime' => 'ASC']);
     }
 }

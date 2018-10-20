@@ -39,8 +39,23 @@ class ReportService
             $bucket->position(),
             $bucket->rfid(),
             $pickupTimes,
-            0
+            $this->maxTimeBetweenPickupsInDays($pickups)
         );
+    }
+
+    public function maxTimeBetweenPickupsInDays(array $pickups): int
+    {
+        $days = 0;
+        $lastPickup = null;
+        foreach ($pickups as $pickup) {
+            if ($lastPickup !== null) {
+                $daysInterval = (($pickup->collectionTime()->getTimestamp() - $lastPickup->collectionTime()->getTimestamp())/60/60/24);
+                if ($daysInterval > $days) $days= (int)$daysInterval;
+            }
+            $lastPickup = $pickup;
+        }
+
+        return $days;
     }
 
     public function reportForLap(UuidInterface $lapId): LapReport
