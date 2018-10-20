@@ -102,19 +102,23 @@ class Complainment
         return $this->submitter;
     }
 
-    public function process(string $status, \DataTimeImmutable $processStart): void
+    public function process(string $status, \DateTimeImmutable $processStart): void
     {
         $this->status = $status;
         $this->complainmentProcessingStartTime = $processStart;
     }
 
-    public function reject(): void
+    public function reject(string $status, \DateTimeImmutable $complainmentCloseTime, string $rejectionMessage): void
     {
-        
+        $this->status = $status;
+        $this->complainmentCloseTime = $complainmentCloseTime;
+        $this->rejectionMessage = $rejectionMessage;
     }
 
-    public function confirm(): void
+    public function confirm(string $status, \DateTimeImmutable $complainmentCloseTime, string $confirmationMessage): void
     {
-
+        $this->status = $status;
+        $this->complainmentCloseTime = $complainmentCloseTime;
+        $this->confirmationMessage = $confirmationMessage;
     }
 }
