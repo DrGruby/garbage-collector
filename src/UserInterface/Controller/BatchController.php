@@ -3,6 +3,7 @@ namespace App\UserInterface\Controller;
 
 use App\Domain\Entity\Bucket;
 use App\Domain\Entity\Position;
+use App\Domain\Events\TruckUnloaded;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Response;
@@ -132,6 +133,47 @@ class BatchController extends Controller
             $response = $this->extractDataFromFile($file, function($object) use ($bucketRepository)
             {
                 var_dump($object);
+                // if(!empty($object["Nr pojemnika"])) {
+                //     $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);
+                //     $bucket = new Bucket($object['Nr pojemnika'],$object['Typ pojemnika'],$position,2);
+                //     $bucketRepository->add($bucket);
+                // }
+            }, $minKeys, $maxRow);
+        }
+        return new Response(
+            '<html><body>'.$response.'</body></html>'
+        );
+    }
+
+    /**
+     * @Route("/sort", name="app_sort")
+     */
+    public function sort()
+    {
+        $finder = new Finder();
+        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/sortownia')->name('*.csv');
+
+        foreach($finder as $file){
+            $file = $file->getRealPath();
+            $minKeys = 5;
+            $maxRow = 100;
+            // $bucketRepository = $this->get('app.bucket_repository');
+            $bucketRepository = 1;
+            $response = $this->extractDataFromFile($file, function($object) use ($bucketRepository)
+            {
+                $district = preg_replace('/<Sektor ([0-9]{1}) >/', '$1',$object['Info']);
+                if(is_numeric($district))
+                {
+                    $truckUnload = new TruckUnloaded(
+                        $district,
+                        $this->getGarbageType($object['Asortyment']),
+                        $object['Netto Rozl'], 
+                        new \DateTimeImmutable($object['DataBrutto']), 
+                        $object['Nr Rej.']
+                    );
+                    return print_r($truckUnload, true);
+                }
+                return false;
                 // if(!empty($object["Nr pojemnika"])) {
                 //     $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);
                 //     $bucket = new Bucket($object['Nr pojemnika'],$object['Typ pojemnika'],$position,2);
