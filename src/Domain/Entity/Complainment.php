@@ -101,4 +101,20 @@ class Complainment
     {
         return $this->submitter;
     }
+
+    public function process(string $status, \DataTimeImmutable $processStart): void
+    {
+        $this->status = $status;
+        $this->complainmentProcessingStartTime = $processStart;
+    }
+
+    public function reject(): void
+    {
+        
+    }
+
+    public function confirm(): void
+    {
+
+    }
 }
