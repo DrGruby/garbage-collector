@@ -4,6 +4,9 @@ namespace App\UserInterface\Controller;
 use App\Domain\Entity\Complainment;
 use App\Domain\Entity\Position;
 use App\Domain\Events\ComplainmentMade;
+use App\Domain\Events\ComplainmentBeingProcessed;
+use App\Domain\Events\ComplainmentRejected;
+use App\Domain\Events\ComplainmentConfirmed;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,7 +58,8 @@ class ComplainmentController extends Controller
             $complainmentMade = new ComplainmentMade(
                 $fields['description'],
                 $position,
-                $fields['complainment']
+                $fields['complainment'],
+                $fields['email']
             );
 
             $complainmentService->newComplainment($complainmentMade);
@@ -95,9 +99,9 @@ class ComplainmentController extends Controller
 
             $mapped = [
                 'id' => $complainment->id(),
-                'complainmentCloseTime' => $complainment->complainmentCloseTime(),
-                'complainmentProcessingStartTime' => $complainment->complainmentProcessingStartTime(),
-                'complainmentSubmitTime' => $complainment->complainmentSubmitTime(),
+                'complainmentCloseTime' => $complainment->complainmentCloseTime() ? $complainment->complainmentCloseTime()->format('Y-m-d') : 'Not closed yet...',
+                'complainmentProcessingStartTime' => $complainment->complainmentProcessingStartTime() ? $complainment->complainmentProcessingStartTime()->format('Y-m-d') : 'Not started yet...',
+                'complainmentSubmitTime' => $complainment->complainmentSubmitTime()->format('Y-m-d'),
                 'complainmentType' => $complainment->complainmentType(),
                 'confirmationMessage' => $complainment->confirmationMessage(),
                 'position' => [
@@ -110,11 +114,49 @@ class ComplainmentController extends Controller
                 'submitter' => $complainment->submitter()
             ];
     
-            return new Response(json_encode($mapped));
+            return $this->render('DetailedComplainView.html.twig', $mapped);
 
         } catch(\Exception $e) {
             return new Response($e->getMessage());
         }
     }
 
+    /**
+     * @Route("admin/complainments/{complainmentId}/process", name="app_admin_complainments_process")
+     */
+    public function setToProcess($complainmentId)
+    {
+        $complainmentService = $this->get('app.complainment_service');
+        $event = new ComplainmentBeingProcessed(Uuid::fromString($complainmentId));
+        
+        $complainmentService->setComplainmentToProcess($event);
+
+        return $this->render('ProcessComplainmentView.html.twig');
+    }
+
+    /**
+     * @Route("admin/complainments/{complainmentId}/reject", name="app_admin_complainments_reject")
+     */
+    public function rejectComplain($complainmentId)
+    {
+        $complainmentService = $this->get('app.complainment_service');
+        $event = new ComplainmentRejected(Uuid::fromString($complainmentId));
+        
+        $complainmentService->setReject($event);
+
+        return $this->render('ProcessComplainmentView.html.twig');
+    }
+
+    /**
+     * @Route("admin/complainments/{id}/confirm", name="app_admin_complainments_confirm")
+     */
+    public function confirmComplain($complainmentId)
+    {
+        $complainmentService = $this->get('app.complainment_service');
+        $event = new ComplainmentConfirmed(Uuid::fromString($complainmentId));
+        
+        $complainmentService->setComplainmentToProcess($event);
+
+        return $this->render('ProcessComplainmentView.html.twig');
+    }
 }
