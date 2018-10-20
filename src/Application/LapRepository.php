@@ -11,5 +11,5 @@ interface LapRepository
 
     public function get(UuidInterface $lapId): Lap;
 
-    public function getActiveLapForTruckId(UuidInterface $truckId): Lap;
+    public function getActiveLapForTruckId(UuidInterface $truckId): ?Lap;
 }

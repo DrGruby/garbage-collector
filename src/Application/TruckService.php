@@ -42,7 +42,14 @@ class TruckService
         $garbagePickup = new GarbagePickup($bucket->id(), $event->collectionTime(), $event->garbageType());
 
         $truck = $this->truckRepository->getByPlate($event->truckPlatesId());
+
         $lap = $this->lapRepository->getActiveLapForTruckId($truck->id());
+
+        if ($lap === null) {
+            $lap = new Lap($truck->id(), $event->collectionTime());
+            $this->lapRepository->save($lap);
+        }
+
         $lap->collectGarbage($garbagePickup->id());
 
         $this->garbagePickupRepository->add($garbagePickup);
@@ -51,7 +58,9 @@ class TruckService
     public function truckUnloaded(TruckUnloaded $event)
     {
         $truck = $this->truckRepository->getByPlate($event->truckPlatesId());
+        if ($truck === null) return;
         $lap = $this->lapRepository->getActiveLapForTruckId($truck->id());
+        if ($lap === null) return;
         $lap->finish($event->garbageWeight(), $event->truckArriveTime(), $event->district(), $event->garbageType());
         $this->lapRepository->save($lap);
     }
