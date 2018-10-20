@@ -119,7 +119,7 @@ class BatchController extends Controller
                     if(preg_match('/ /', $truckName))
                     {
                         $truckRaw = explode(' ', $object['Pojazd']);
-                        $truckName = preg_replace('[\(\)]', '', $truckRaw[1]);
+                        $truckName = preg_replace('/[\(\)]/', '', $truckRaw[1]);
                         $truckPlate = $truckRaw[0];
                     }
                     $truck = $controller->getTruck($truckName, $truckPlate);
