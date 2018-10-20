@@ -3,6 +3,9 @@ namespace App\UserInterface\Controller;
 
 use App\Domain\Entity\Bucket;
 use App\Domain\Entity\Position;
+use App\Domain\Entity\Truck;
+use App\Domain\Events\TruckCollectedPayload;
+use App\Domain\Events\TruckDeparted;
 use App\Domain\Events\TruckUnloaded;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Finder;
@@ -11,10 +14,34 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class BatchController extends Controller
 {
+    protected function getTruck(string $name, string $plates)
+    {
+        try {
+            $truck = $this->get('app.truck_repository')->getByPlate($plates);
+        } catch(\Exception $e) {
+            $truck = new Truck($name, $plates);
+            $this->get('app.truck_repository')->add($truck);
+        }
+        return $truck;
+    }
+
+    protected function getBucket(string $rfid, string $type, position $position, int $district)
+    {
+        try {
+            $bucket = $this->get('app.bucket_repository')->getByRFID($rfid);
+        } catch(\Exception $e) {
+            $bucket = new Bucket($rfid,$type,$position,$district);
+            $this->get('app.bucket_repository')->add($bucket);
+        }
+
+        return $bucket;
+    }
+
     protected function getGarbageType($type)
     {
         switch($type)
         {  
+            case 'suche':
             case "SUCHE":
                 return Bucket::GARBAGE_DRY;
             case "szkło":
@@ -83,6 +110,39 @@ class BatchController extends Controller
     }
 
     /**
+     * @Route("/komaEvent", name="app_koma_event")
+     */
+    public function komaEvent()
+    {
+        $finder = new Finder();
+        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/koma/inventeryzacja')->name('*.csv');
+
+        foreach($finder as $file){
+            $filePath = $file->getRealPath();
+            $minKeys = 5;
+            $maxRow = 10;
+            $bucketRepository = $this->get('app.bucket_repository');
+
+            $controller = $this;
+            $district = preg_replace('/.+([0-9]{1}).csv$/', "$1", $file->getFilename());
+
+            $response = $this->extractDataFromFile($filePath, function($object) use ($district, $controller)
+            {
+                $rfid = $object['Nr pojemnika'];
+                if(!empty($rfid)) {
+                    $type = $this->getGarbageType($object['Typ odpadu']);
+                    $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);        
+                    $bucket = $controller->getBucket($rfid, $type, $position, $district);
+                    return $bucket->id();
+                }
+            }, $minKeys, $maxRow);
+        }
+        return new Response(
+            '<html><body>'.$response.'</body></html>'
+        );
+    }
+
+    /**
      * @Route("/komaInvent", name="app_koma_invent")
      */
     public function komaInvent()
@@ -101,11 +161,11 @@ class BatchController extends Controller
 
             $response = $this->extractDataFromFile($filePath, function($object) use ($district, $controller)
             {
-                if(!empty($object["Nr pojemnika"])) {
-                    $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);
-                    $type = $controller->getGarbageType($object['Typ odpadu']);
-                    $bucket = new Bucket($object['Nr pojemnika'],$type,$position,$district);
-                    $controller->get('app.bucket_repository')->add($bucket);
+                $rfid = $object['Nr pojemnika'];
+                if(!empty($rfid)) {
+                    $type = $this->getGarbageType($object['Typ odpadu']);
+                    $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);        
+                    $bucket = $controller->getBucket($rfid, $type, $position, $district);
                     return $bucket->id();
                 }
             }, $minKeys, $maxRow);
@@ -125,18 +185,51 @@ class BatchController extends Controller
 
         foreach($finder as $file){
             $file = $file->getRealPath();
-            $minKeys = 25;
+            $minKeys = 10;
             $maxRow = 10;
             // $bucketRepository = $this->get('app.bucket_repository');
             $bucketRepository = 1;
-            $response = $this->extractDataFromFile($file, function($object) use ($bucketRepository)
+            $controller = $this;
+            $response = $this->extractDataFromFile($file, function($object) use ($controller)
             {
-                var_dump($object);
-                // if(!empty($object["Nr pojemnika"])) {
-                //     $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);
-                //     $bucket = new Bucket($object['Nr pojemnika'],$object['Typ pojemnika'],$position,2);
-                //     $bucketRepository->add($bucket);
-                // }
+                $date = new \DateTimeImmutable($object['Czas zdarzenia']);
+                $district = 6;
+                $position = new Position($positions[0],$positions[1]);
+                $positions = split(' , ', $object['WSPÓŁRZĘDNE POJAZDU']);
+                $status = $object['opis'];
+                $type = $this->getGarbageType($object['FRAKCJA']);
+
+                $truck = $controller->getTruck($object['NAZWA POJAZDU'], $object['NR REJESTRACYJNY']);
+                
+                switch($status)
+                {
+                    case "Logowanie NAVI":
+                        $truckDeparted = new TruckDeparted($date, $truck->plates());
+                        $controller->get('app.truck_service')->newLap($truckDeparted);
+                        break;
+                    case 'Załadunek pojemnika':
+                        $bucket = $controller->getBucket($rfid, $type, $position, $district);
+                        $garbageCollected = new TruckCollectedPayload(
+                            $bucket->rfid(),
+                            $position,
+                            $date,
+                            $bucket->garbageType(),
+                            $truck->plates()
+                        );
+                        $controller->get('app.truck_service')->garbageCollected($garbageCollected);
+                        break;
+                    case 'Wyładunek':
+                        // how to get data in here?
+                        break;
+                    case 'Wylogowanie NAVI':
+                        // what to do ?
+                        break;
+                    case 'Notatka':
+                    default:
+                        //add ERROR ?
+                }
+                
+                return print_r($object, true);
             }, $minKeys, $maxRow);
         }
         return new Response(
@@ -156,7 +249,6 @@ class BatchController extends Controller
             $file = $file->getRealPath();
             $minKeys = 5;
             $maxRow = 100;
-            // $bucketRepository = $this->get('app.bucket_repository');
             $bucketRepository = 1;
             $response = $this->extractDataFromFile($file, function($object) use ($bucketRepository)
             {
@@ -173,11 +265,6 @@ class BatchController extends Controller
                     return print_r($truckUnload, true);
                 }
                 return false;
-                // if(!empty($object["Nr pojemnika"])) {
-                //     $position = new Position($object['Szerokość geograficzna'],$object['Długość geograficzna']);
-                //     $bucket = new Bucket($object['Nr pojemnika'],$object['Typ pojemnika'],$position,2);
-                //     $bucketRepository->add($bucket);
-                // }
             }, $minKeys, $maxRow);
         }
         return new Response(
