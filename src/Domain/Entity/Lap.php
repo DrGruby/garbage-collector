@@ -15,6 +15,10 @@ class Lap
     private $status;
     /** @var UuidInterface[] */
     private $pickupIds;
+    private $garbageWeight;
+    private $unloadTime;
+    private $district;
+    private $garbageType;
 
     public function __construct(UuidInterface $truckId, \DateTimeImmutable $startTime)
     {
@@ -30,6 +34,43 @@ class Lap
         $this->pickupIds[] = $pickupId;
     }
 
+    public function finish(float $garbageWeight, \DateTimeImmutable $unloadTime, int $district, string $garbageType) {
+        $this->garbageWeight = $garbageWeight;
+        $this->unloadTime = $unloadTime;
+        $this->district = $district;
+        $this->garbageType = $garbageType;
+        $this->status = self::STATUS_FINISHED;
+
+    }
+
+    public function id(): UuidInterface
+    {
+        return $this->id;
+    }
+
+    public function status(): string
+    {
+        return $this->status;
+    }
+
+    public function pickupIds(): array
+    {
+        return $this->pickupIds;
+    }
+
+    public function garbageWeight()
+    {
+        return $this->garbageWeight;
+    }
+
+    public function unloadTime()
+    {
+        return $this->unloadTime;
+    }
+    public function district()
+    {
+        return $this->district;
+    }
     public function truckId(): UuidInterface
     {
         return $this->truckId;

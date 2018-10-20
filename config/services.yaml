@@ -25,4 +25,18 @@ services:
         class: App\Infrastructure\DoctrineBucketRepository
         arguments:
             - "@doctrine.orm.default_entity_manager"
-
+    app.pickup_repository:
+        class: App\Infrastructure\DoctrinePickupRepository
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+    app.lap_repository:
+        class: App\Infrastructure\DoctrineLapRepository
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+    app.truck_service:
+        class: App\Application\TruckService
+        arguments:
+            - "@app.truck_repository"
+            - "@app.lap_repository"
+            - "@app.pickup_repository"
+            - "@app.bucket_repository"

@@ -7,6 +7,7 @@ use App\Domain\Entity\Lap;
 use App\Domain\Entity\Truck;
 use App\Domain\Events\TruckCollectedPayload;
 use App\Domain\Events\TruckDeparted;
+use App\Domain\Events\TruckUnloaded;
 
 class TruckService
 {
@@ -28,22 +29,30 @@ class TruckService
         $this->bucketRepository = $bucketRepository;
     }
 
-    public function newLap(TruckDeparted $truckDeparted)
+    public function newLap(TruckDeparted $event)
     {
-        $truck = $this->truckRepository->getByPlate($truckDeparted->truckPlatesId());
-        $newLap = new Lap($truck->id(), $truckDeparted->departureTime());
-        $this->lapRepository->add($newLap);
+        $truck = $this->truckRepository->getByPlate($event->truckPlatesId());
+        $newLap = new Lap($truck->id(), $event->departureTime());
+        $this->lapRepository->save($newLap);
     }
 
     public function garbageCollected(TruckCollectedPayload $event)
     {
         $bucket = $this->bucketRepository->getByRFID($event->bucketRfid());
-        $garbagePickup = new GarbagePickup($bucket->id(), $event->collectionTime(),$event->garbageType());
+        $garbagePickup = new GarbagePickup($bucket->id(), $event->collectionTime(), $event->garbageType());
 
         $truck = $this->truckRepository->getByPlate($event->truckPlatesId());
         $lap = $this->lapRepository->getActiveLapForTruckId($truck->id());
         $lap->collectGarbage($garbagePickup->id());
 
         $this->garbagePickupRepository->add($garbagePickup);
+    }
+
+    public function truckUnloaded(TruckUnloaded $event)
+    {
+        $truck = $this->truckRepository->getByPlate($event->truckPlatesId());
+        $lap = $this->lapRepository->getActiveLapForTruckId($truck->id());
+        $lap->finish($event->garbageWeight(), $event->truckArriveTime(), $event->district(), $event->garbageType());
+        $this->lapRepository->save($lap);
     }
 }

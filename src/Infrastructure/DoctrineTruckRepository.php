@@ -31,6 +31,6 @@ class DoctrineTruckRepository implements TruckRepository
 
     public function getByPlate(string $truckPlatesId): Truck
     {
-        $this->repository->findOneBy(['plates' => $truckPlatesId]);
+        return $this->repository->findOneBy(['plates' => $truckPlatesId]);
     }
 }

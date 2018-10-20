@@ -7,9 +7,9 @@ use Ramsey\Uuid\UuidInterface;
 
 interface LapRepository
 {
-    public function add(Lap $lap): void;
+    public function save(Lap $lap): void;
 
     public function get(UuidInterface $lapId): Lap;
 
-    public function getActiveLapForTruckId(UuidInterface $id): Lap;
+    public function getActiveLapForTruckId(UuidInterface $truckId): Lap;
 }

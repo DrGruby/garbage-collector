@@ -11,4 +11,18 @@ App\Domain\Entity\Lap:
     startTime:
       type: date_immutable
     pickupIds:
-      type: simple_array
+      type: array
+    status:
+      type: string
+    garbageWeight:
+      type: float
+      nullable: true
+    unloadTime:
+      type: date_immutable
+      nullable: true
+    district:
+      type: integer
+      nullable: true
+    garbageType:
+      type: string
+      nullable: true
