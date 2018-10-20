@@ -44,3 +44,8 @@ services:
             - "@app.lap_repository"
             - "@app.pickup_repository"
             - "@app.bucket_repository"
+    app.batch_service:
+        class: App\Application\BatchService
+        arguments:
+            - "@app.truck_service"
+            - '@app.event_repository'
