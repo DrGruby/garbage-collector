@@ -31,7 +31,13 @@ class ReportService
 
         $pickupTimes = [];
 
+        foreach ($pickups as $pickup) {
+            $pickupTimes[] = $pickup->collectionTime();
+        }
+
         return new BucketReport(
+            $bucket->position(),
+            $bucket->rfid(),
             $pickupTimes,
             0
         );
