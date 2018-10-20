@@ -29,9 +29,9 @@ class DoctrineLapRepository implements LapRepository
         return $this->repository->find($lapId);
     }
 
-    public function getAll(): Array
+    public function getAll(): array
     {
-        return $this->repository->find(['status' => Lap::STATUS_FINISHED ]);
+        return $this->repository->findBy(['status' => Lap::STATUS_FINISHED ]);
     }
 
     public function getActiveLapForTruckId(UuidInterface $truckId): ?Lap

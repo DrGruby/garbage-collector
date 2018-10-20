@@ -30,13 +30,11 @@ class ReportsController extends Controller
         $reportService = $this->get('app.lap_report');
 
         $report = $reportService->reportForLap(Uuid::fromString($id));
+        $renderData = [
+            'viewName' => 'Report',
+            'report' => $report,
+        ];
 
-        var_dump((string)$report->lapId());
-        var_dump($report->maxTimeBetweenPickups());
-        var_dump($report->pickedGarbage());
-        var_dump($report->timeToUnload());
-        var_dump($report->totalLapTime());
-
-        return new Response('derp');
+        return $this->render('reports/ReportView.html.twig', $renderData);
     }
 }
