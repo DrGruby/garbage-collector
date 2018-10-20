@@ -271,5 +271,44 @@ class BatchController extends Controller
             '<html><body>'.$response.'</body></html>'
         );
     }
+
+    /**
+     * @Route("/garbageLitter", name="app_garbageLitter")
+     */
+    public function garbageLitter()
+    {
+        $finder = new Finder();
+        $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/spalarnia')->name('*.csv');
+
+        foreach($finder as $file){
+            $file = $file->getRealPath();
+            $minKeys = 5;
+            $controller = $this;
+            $response = $this->extractDataFromFile($file, function($object) use ($controller)
+            {
+                $district = preg_replace('/SEKTOR ([0-9]{1})/', '$1',$object['POCHODZENIE']);
+
+                if(is_numeric($district))
+                {
+                    $time = new \DateTimeImmutable($object['DATA 1 WAŻENIA']);
+                    $truckUnload = new TruckUnloaded(
+                        $district,
+                        $controller->getGarbageType($object['PRODUKT']),
+                        $object['NETTO'], 
+                        $time, 
+                        $object['POJAZD/ WAGON']
+                    );
+
+                    $event = new Event($time, serialize($truckUnload));
+                    $controller->get('app.event_repository')->add($event);
+                    return print_r($truckUnload, true);
+                }
+                return false;
+            }, $minKeys);
+        }
+        return new Response(
+            '<html><body>'.$response.'</body></html>'
+        );
+    }
 }
 
