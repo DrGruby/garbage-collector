@@ -7,13 +7,13 @@ App\Domain\Entity\Complainment:
       generator: { strategy: NONE }
   fields:
     complainmentCloseTime:
-      type: date_immutable
+      type: datetime_immutable
       nullable: true
     complainmentProcessingStartTime:
-      type: date_immutable
+      type: datetime_immutable
       nullable: true
     complainmentSubmitTime:
-      type: date_immutable
+      type: datetime_immutable
     complainmentType:
       type: string
     confirmationMessage:

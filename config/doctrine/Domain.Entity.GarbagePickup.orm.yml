@@ -9,6 +9,6 @@ App\Domain\Entity\GarbagePickup:
     bucketId:
       type: uuid
     collectionTime:
-      type: date_immutable
+      type: datetime_immutable
     garbageType:
       type: string

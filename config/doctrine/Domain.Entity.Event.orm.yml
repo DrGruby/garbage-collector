@@ -7,7 +7,7 @@ App\Domain\Entity\Event:
       generator: { strategy: NONE }
   fields:
     time:
-      type: date_immutable
+      type: datetime_immutable
       nullable: true
     data:
       type: text
