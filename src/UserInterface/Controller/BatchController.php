@@ -93,9 +93,9 @@ class BatchController extends Controller
     }
 
     /**
-     * @Route("/komaEvent", name="app_koma_event")
+     * @Route("/eventsImport", name="app_events_import")
      */
-    public function komaEvent()
+    public function eventsImport()
     {
         $finder = new Finder();
         $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/koma/eventy')->name('*.csv');
@@ -141,9 +141,9 @@ class BatchController extends Controller
     }
 
     /**
-     * @Route("/komaInvent", name="app_koma_invent")
+     * @Route("/bucketImport", name="app_bucket_import")
      */
-    public function komaInvent()
+    public function bucketImport()
     {
         $finder = new Finder();
         $finder->files()->in($this->get('kernel')->getProjectDir().'/csv/koma/inventeryzacja')->name('*.csv');
