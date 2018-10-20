@@ -71,11 +71,30 @@ class ComplainmentController extends Controller
     }
 
     /**
-     * @Route("admin/complainments/show-new", name="app_admin_complainments_show_new")
+     * @Route("admin/complainments-show-new", name="app_admin_complainments_show_new")
      */
     public function adminShowNewComplainments()
     {
-        $complainments = $this->get('app.complainment_query')->getNewComplainments();
+        $complainments = $this->get('app.complainment_query')->getByStatusComplainments();
+
+        $mapped = array_map(function($complainment) {
+            return [
+                'complainmentType' => $complainment->complainmentType(),
+                'id' => $complainment->id(),
+                'status' => $complainment->status(),
+                'submitter' => $complainment->submitter(),
+            ];
+        }, $complainments);
+
+        return $this->render('NewComplainmentsView.html.twig', ['mapped' => $mapped]);
+    }
+
+    /**
+     * @Route("admin/complainments-show-close", name="app_admin_complainments_show_close")
+     */
+    public function adminShowCloseComplainments()
+    {
+        $complainments = $this->get('app.complainment_query')->getByStatusComplainments('close');
 
         $mapped = array_map(function($complainment) {
             return [

@@ -7,5 +7,5 @@ use Ramsey\Uuid\UuidInterface;
 interface ComplainmentQuery
 {
     public function getById(UuidInterface $complainmentId): DetailedComplainmentView;
-    public function getNewComplainments(): array;
+    public function getByStatusComplainments( string $status = 'new' ): array;
 }

@@ -45,8 +45,8 @@ class DbalComplainmentQuery implements ComplainmentQuery
         );
     }
 
-    public function getNewComplainments(): array
+    public function getByStatusComplainments(string $status = 'new'): array
     {
-        return $this->repository->findBy(['status' => 'new']);
+        return $this->repository->findBy(['status' => $status]);
     }
 }
