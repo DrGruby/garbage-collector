@@ -21,6 +21,7 @@ class DoctrineLapRepository implements LapRepository
     public function save(Lap $lap): void
     {
         $this->entityManager->merge($lap);
+        $this->entityManager->flush();
     }
 
     public function get(UuidInterface $lapId): Lap
